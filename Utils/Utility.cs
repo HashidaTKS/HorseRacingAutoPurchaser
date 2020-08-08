@@ -41,6 +41,17 @@ namespace HorseRacingAutoPurchaser
             new Region("佐賀", "55", RegionType.Regional),
         };
 
+        public static string GetRegionNameAtRakuten(Region region) {
+            if(region.RegionId == "65")
+            {
+                return "帯広ば";
+            }
+            else
+            {
+                return region.RegionName;
+            }
+        }
+
         public static Region GetRegionFromName(string regionName)
         {
             //念のため部分一致にしておく。どうにかしたい。
@@ -72,6 +83,15 @@ namespace HorseRacingAutoPurchaser
                 "RaceData",
                 raceInfo.HoldingDatum.HeldDate.ToString("yyyyMMdd"),
                 oddsType.ToString(),
+                $"{raceInfo.HoldingDatum.Region.RegionId}-{raceInfo.HoldingDatum.Region.RegionName}-{raceInfo.RaceNumber}.xml");
+        }
+
+        public static string GetBetInformationFilePath(RaceData raceInfo)
+        {
+            return Path.Combine(
+                "RaceData",
+                raceInfo.HoldingDatum.HeldDate.ToString("yyyyMMdd"),
+                "BetInfo",
                 $"{raceInfo.HoldingDatum.Region.RegionId}-{raceInfo.HoldingDatum.Region.RegionName}-{raceInfo.RaceNumber}.xml");
         }
 

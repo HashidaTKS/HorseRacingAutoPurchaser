@@ -202,7 +202,7 @@ namespace HorseRacingAutoPurchaser
             {
                 Chrome.Url = url;
                 //画面の切り替わり完了待ち
-                Thread.Sleep(300);
+                Thread.Sleep(1000);
 
                 var raceListDataListCollection = Chrome.FindElementByClassName("RaceList_Box").FindElements(By.ClassName("RaceList_DataList"));
                 var count = raceListDataListCollection.Count;
@@ -228,14 +228,12 @@ namespace HorseRacingAutoPurchaser
                     {
                         continue;
                     }
-                    //var totalRaceCount = raceListDataListCollection[i].FindElements(By.ClassName("RaceList_ItemContent")).Count;
-
                     var startTimeList = new List<DateTime>();
                     var horseCountList = new List<int>();
                     foreach (var item in raceListDataListCollection[i].FindElements(By.ClassName("RaceList_ItemContent")))
                     {
-                        var textForData = item.FindElement(By.ClassName("RaceData")).Text;
-                        var regexForData = new Regex(@" *?(\d\d):(\d\d) +.*? +(\d+)頭.*?");
+                        var textForData = item.FindElement(By.ClassName("RaceData")).GetAttribute("textContent").Replace("\r", "").Replace("\n", "");
+                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(\d+)頭.*?");
                         var matchForData = regexForData.Match(textForData);
                         if (!matchForData.Success)
                         {

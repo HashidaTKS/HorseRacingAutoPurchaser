@@ -13,7 +13,7 @@ namespace HorseRacingAutoPurchaser
         {
             lock (this)
             {
-                return ReadAll()?.HoldingData?.FirstOrDefault(_ => _.HeldDate == date && _.Region.RegionId == region.RegionId);
+                return ReadAll()?.HoldingData?.FirstOrDefault(_ => _.HeldDate.Date == date.Date && _.Region.RegionId == region.RegionId);
             }
         }
     }

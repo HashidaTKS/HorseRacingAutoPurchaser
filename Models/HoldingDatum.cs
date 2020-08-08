@@ -47,7 +47,7 @@ namespace HorseRacingAutoPurchaser
             Region = region;
             NumberOfHeld = numberOfHeld;
             NumberOfDay = numberOfDay;
-            HeldDate = heldDate;
+            HeldDate = heldDate.Date;
             StartTimeList = startTimeList;
             HorseCountList = horseCountList;
         }

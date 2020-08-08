@@ -233,6 +233,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\BetConfigRepository.cs" />
+    <Compile Include="Infrastructure\BetInformationRepository.cs" />
+    <Compile Include="Infrastructure\BetResultStatusRepository.cs" />
     <Compile Include="LoginConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,8 +250,10 @@
     <Compile Include="Infrastructure\TheoreticalRaceDataRepository.cs" />
     <Compile Include="Infrastructure\XmlSerializerWrapper.cs" />
     <Compile Include="Models\ActualRaceAndOddsData.cs" />
-    <Compile Include="Models\BetConfig.cs" />
     <Compile Include="Models\BetInformation.cs" />
+    <Compile Include="Models\BetResultStatus.cs" />
+    <Compile Include="Models\BetConfig.cs" />
+    <Compile Include="Models\BetDatum.cs" />
     <Compile Include="Models\HoldingDatum.cs" />
     <Compile Include="Models\HoldingInformation.cs" />
     <Compile Include="Models\HorseDatum.cs" />

@@ -17,7 +17,7 @@ namespace HorseRacingAutoPurchaser
             var holdingData = new List<HoldingDatum>();
             try
             {
-                holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate == date).ToList();
+                holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate.Date == date.Date).ToList();
             }
             catch (Exception ex)
             {
@@ -43,10 +43,11 @@ namespace HorseRacingAutoPurchaser
             var holdingInformationRepository = new HoldingInformationRepository();
             var currentHoldingInformation = holdingInformationRepository.ReadAll();
 
-            if(currentHoldingInformation == null)
+            if(currentHoldingInformation == null || currentHoldingInformation.HoldingData.Any(_ => _.HeldDate.Date == date.Date))
             {
                 try
                 {
+                    //別々に取得しなきゃいけないのおかしくね
                     var centralHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Central);
                     var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
                     currentHoldingInformation = centralHoldingInformation.MargeStatus(regionalHoldingInformation);
@@ -59,7 +60,7 @@ namespace HorseRacingAutoPurchaser
                 }
             }
          
-            var holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate == date).ToList();           
+            var holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate.Date == date.Date).ToList();           
 
             foreach (var holdingDatum in holdingData)
             {

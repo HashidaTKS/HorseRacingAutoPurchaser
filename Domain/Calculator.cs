@@ -11,8 +11,8 @@ namespace HorseRacingAutoPurchaser
         public Calculator(List<HorseDatum> horceData)
         {
             HorseData = horceData;
-            Console.WriteLine(string.Join(",", HorseData.Select(_ => _.WinProbability.ToString())));
-            Console.WriteLine(HorseData.Sum(_ => _.WinProbability));
+            //Console.WriteLine(string.Join(",", HorseData.Select(_ => _.WinProbability.ToString())));
+            //Console.WriteLine(HorseData.Sum(_ => _.WinProbability));
         }
 
         public IEnumerable<OddsDatum> GetAllWinOdds()

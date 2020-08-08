@@ -50,6 +50,9 @@
             this.numericUpDown_QuinellaCocomoMaxMagnification = new System.Windows.Forms.NumericUpDown();
             this.button_SavePurchaseSetting = new System.Windows.Forms.Button();
             this.button_ResetPurchaseSetting = new System.Windows.Forms.Button();
+            this.checkBox_PurchaseCentral = new System.Windows.Forms.CheckBox();
+            this.checkBox_PurchaseRegional = new System.Windows.Forms.CheckBox();
+            this.groupBox_PurchaseTarget = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaOddsRatio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMinimumOdds)).BeginInit();
@@ -58,11 +61,12 @@
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoMaxMagnification)).BeginInit();
+            this.groupBox_PurchaseTarget.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_AutoPurchase
             // 
-            this.button_AutoPurchase.Location = new System.Drawing.Point(589, 219);
+            this.button_AutoPurchase.Location = new System.Drawing.Point(580, 219);
             this.button_AutoPurchase.Name = "button_AutoPurchase";
             this.button_AutoPurchase.Size = new System.Drawing.Size(107, 23);
             this.button_AutoPurchase.TabIndex = 0;
@@ -82,7 +86,7 @@
             // 
             // button_AutoPurchase_Cancel
             // 
-            this.button_AutoPurchase_Cancel.Location = new System.Drawing.Point(703, 219);
+            this.button_AutoPurchase_Cancel.Location = new System.Drawing.Point(702, 219);
             this.button_AutoPurchase_Cancel.Name = "button_AutoPurchase_Cancel";
             this.button_AutoPurchase_Cancel.Size = new System.Drawing.Size(85, 23);
             this.button_AutoPurchase_Cancel.TabIndex = 2;
@@ -103,6 +107,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox_PurchaseTarget);
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.numericUpDown_QuinnelaMinimumPayBack);
             this.groupBox1.Controls.Add(this.numericUpDown_QuinellaMaximumOdds);
@@ -354,7 +359,7 @@
             // 
             // button_SavePurchaseSetting
             // 
-            this.button_SavePurchaseSetting.Location = new System.Drawing.Point(20, 219);
+            this.button_SavePurchaseSetting.Location = new System.Drawing.Point(19, 219);
             this.button_SavePurchaseSetting.Name = "button_SavePurchaseSetting";
             this.button_SavePurchaseSetting.Size = new System.Drawing.Size(102, 23);
             this.button_SavePurchaseSetting.TabIndex = 7;
@@ -372,11 +377,44 @@
             this.button_ResetPurchaseSetting.UseVisualStyleBackColor = true;
             this.button_ResetPurchaseSetting.Click += new System.EventHandler(this.Button_ResetPurchaseSetting_Click);
             // 
+            // checkBox_PurchaseCentral
+            // 
+            this.checkBox_PurchaseCentral.AutoSize = true;
+            this.checkBox_PurchaseCentral.Checked = true;
+            this.checkBox_PurchaseCentral.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_PurchaseCentral.Location = new System.Drawing.Point(16, 18);
+            this.checkBox_PurchaseCentral.Name = "checkBox_PurchaseCentral";
+            this.checkBox_PurchaseCentral.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_PurchaseCentral.TabIndex = 11;
+            this.checkBox_PurchaseCentral.Text = "中央競馬";
+            this.checkBox_PurchaseCentral.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_PurchaseRegional
+            // 
+            this.checkBox_PurchaseRegional.AutoSize = true;
+            this.checkBox_PurchaseRegional.Location = new System.Drawing.Point(105, 18);
+            this.checkBox_PurchaseRegional.Name = "checkBox_PurchaseRegional";
+            this.checkBox_PurchaseRegional.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_PurchaseRegional.TabIndex = 12;
+            this.checkBox_PurchaseRegional.Text = "地方競馬";
+            this.checkBox_PurchaseRegional.UseVisualStyleBackColor = true;
+            // 
+            // groupBox_PurchaseTarget
+            // 
+            this.groupBox_PurchaseTarget.Controls.Add(this.checkBox_PurchaseCentral);
+            this.groupBox_PurchaseTarget.Controls.Add(this.checkBox_PurchaseRegional);
+            this.groupBox_PurchaseTarget.Location = new System.Drawing.Point(522, 21);
+            this.groupBox_PurchaseTarget.Name = "groupBox_PurchaseTarget";
+            this.groupBox_PurchaseTarget.Size = new System.Drawing.Size(200, 48);
+            this.groupBox_PurchaseTarget.TabIndex = 13;
+            this.groupBox_PurchaseTarget.TabStop = false;
+            this.groupBox_PurchaseTarget.Text = "購入対象";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(799, 256);
+            this.ClientSize = new System.Drawing.Size(799, 250);
             this.Controls.Add(this.button_ResetPurchaseSetting);
             this.Controls.Add(this.button_SavePurchaseSetting);
             this.Controls.Add(this.groupBox1);
@@ -385,7 +423,7 @@
             this.Controls.Add(this.button_LoginConfig);
             this.Controls.Add(this.button_AutoPurchase);
             this.Name = "Form1";
-            this.Text = "競馬自動購入";
+            this.Text = "競馬自動購入（α）";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaOddsRatio)).EndInit();
@@ -396,6 +434,8 @@
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoThreshold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoMaxMagnification)).EndInit();
+            this.groupBox_PurchaseTarget.ResumeLayout(false);
+            this.groupBox_PurchaseTarget.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -425,6 +465,9 @@
         private System.Windows.Forms.CheckBox checkBox_QuinellaUseCocomo;
         private System.Windows.Forms.Button button_SavePurchaseSetting;
         private System.Windows.Forms.Button button_ResetPurchaseSetting;
+        private System.Windows.Forms.GroupBox groupBox_PurchaseTarget;
+        private System.Windows.Forms.CheckBox checkBox_PurchaseCentral;
+        private System.Windows.Forms.CheckBox checkBox_PurchaseRegional;
     }
 }
 

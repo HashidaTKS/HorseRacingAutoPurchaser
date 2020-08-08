@@ -8,24 +8,7 @@ namespace HorseRacingAutoPurchaser
 {
     public class Simulater
     {
-        private class Cocomo
-        {
-            private int Before { get; set; } = 1;
-
-            public int GetNext(int current)
-            {
-                var next =  current + Before;
-                Before = current;
-                return next;
-            }
-
-            public void Reset()
-            {
-                Before = 1;
-            }
-        }
-
-        public static TotalSimulationResult Simulate(DateTime from, DateTime to, bool useOnlySavedData = false)
+        public static TotalResultOfBet Simulate(DateTime from, DateTime to, bool useOnlySavedData = false)
         {
             if (useOnlySavedData)
             {
@@ -38,7 +21,7 @@ namespace HorseRacingAutoPurchaser
 
         }
 
-        public static TotalSimulationResult SimulateInner(DateTime from, DateTime to, Scraper scraper, bool useOnlySavedData = false)
+        public static TotalResultOfBet SimulateInner(DateTime from, DateTime to, Scraper scraper, bool useOnlySavedData = false)
         {
 
             if (to >= DateTime.Today)
@@ -56,13 +39,12 @@ namespace HorseRacingAutoPurchaser
            
             var groupedOutputRaceDataList = outputRaceDataList.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central).GroupBy(_ => _.RaceData.HoldingDatum.HeldDate);
             //var groupedOutputRaceDataList = outputRaceDataList.GroupBy(_ => _.RaceUrlInformation.HoldingDatum.HeldDate);
-            var totalResult = new List<SimulationResultOfDay>();
-            var payBackRatio = 1;
+            var totalResult = new List<DailyResultOfBet>();
             var loseCount = 0;
             var cocomo = new Cocomo();
             foreach (var oneDayOutputRaceDataList in groupedOutputRaceDataList)
             {
-                var resultList = new List<SimulationResultOfBet>();
+                var resultList = new List<ResultOfBet>();
                 foreach (var outputRaceData in oneDayOutputRaceDataList)
                 {
                     var raceResultRepository = RaceResult.GetRepository(outputRaceData.RaceData);
@@ -72,42 +54,29 @@ namespace HorseRacingAutoPurchaser
                         continue;
                     }
 
-                    var betInformationList = TicketSelector.SelectToBet(outputRaceData, payBackRatio);
-                    foreach (var betInformation in betInformationList)
+                    var betData = TicketSelector.SelectToBet(outputRaceData, null, null);
+                    foreach (var betDatum in betData)
                     {
-                        var simulationResultOfBet = new SimulationResultOfBet(betInformation, raceResult);
-                        if(simulationResultOfBet.IsHit)
-                        {
-                            cocomo.Reset();
-                            payBackRatio = 1;
-                        }
-                        else
-                        {
-                            loseCount += 1;
-                            if(loseCount % 50 == 0)
-                            {
-                                payBackRatio = cocomo.GetNext(payBackRatio);
-                            }
-                        }
+                        var simulationResultOfBet = new ResultOfBet(betDatum, raceResult);
                         resultList.Add(simulationResultOfBet);
                     }
                 }
-                totalResult.Add(new SimulationResultOfDay(resultList));
+                totalResult.Add(new DailyResultOfBet(resultList));
             }
-            return new TotalSimulationResult(totalResult);
+            return new TotalResultOfBet(totalResult);
         }
 
     }
 
-    public class TotalSimulationResult
+    public class TotalResultOfBet
     {
-        public List<SimulationResultOfDay> ResultOfDayList { get; set; }
+        public List<DailyResultOfBet> ResultOfDayList { get; set; }
 
         public double TotalBetMoney => ResultOfDayList.Sum(_ => _.TotalBetMoney);
         public double TotalPayBack => ResultOfDayList.Sum(_ => _.TotalPayBack);
         public double TotalProfit => ResultOfDayList.Sum(_ => _.TotalProfit);
 
-        public TotalSimulationResult(List<SimulationResultOfDay> totalResultOfDay)
+        public TotalResultOfBet(List<DailyResultOfBet> totalResultOfDay)
         {
             ResultOfDayList = totalResultOfDay;
         }
@@ -144,11 +113,11 @@ namespace HorseRacingAutoPurchaser
                 }
                 totalCount += 1;
                 var outputLine =
-                    $"{result.BetInformation.RaceData.HoldingDatum.HeldDate.ToString("yyyy/MM/dd")}," +
-                    $"{result.BetInformation.RaceData.HoldingDatum.Region.RegionName}," +
-                    $"{result.BetInformation.RaceData.RaceNumber}," +
-                    $"{result.BetInformation.TicketType.ToString()}," +
-                    $"{string.Join(" - ", result.BetInformation.HorseNumList)}," +
+                    $"{result.BetDatum.RaceData.HoldingDatum.HeldDate.ToString("yyyy/MM/dd")}," +
+                    $"{result.BetDatum.RaceData.HoldingDatum.Region.RegionName}," +
+                    $"{result.BetDatum.RaceData.RaceNumber}," +
+                    $"{result.BetDatum.TicketType.ToString()}," +
+                    $"{string.Join(" - ", result.BetDatum.HorseNumList)}," +
                     $"{result.BetMoney}," +
                     $"{result.PayBack}," +
                     $"{result.Profit}," +
@@ -173,16 +142,16 @@ namespace HorseRacingAutoPurchaser
         }
     }
 
-    public class SimulationResultOfDay
+    public class DailyResultOfBet
     {
         public double TotalBetMoney => ResultOfBetList.Sum(_ => _.BetMoney);
         public double TotalPayBack => ResultOfBetList.Sum(_ => _.PayBack);
 
         public double TotalProfit => ResultOfBetList.Sum(_ => _.Profit);
 
-        public List<SimulationResultOfBet> ResultOfBetList { get; set; }
+        public List<ResultOfBet> ResultOfBetList { get; set; }
 
-        public SimulationResultOfDay(List<SimulationResultOfBet> resultOfBetList)
+        public DailyResultOfBet(List<ResultOfBet> resultOfBetList)
         {
             ResultOfBetList = resultOfBetList;
         }
@@ -193,13 +162,13 @@ namespace HorseRacingAutoPurchaser
         }
     }
 
-    public class SimulationResultOfBet
+    public class ResultOfBet
     {
-        public BetInformation BetInformation { get; set; }
+        public BetDatum BetDatum { get; set; }
 
         public RaceResult RaceResult { get; set; }
 
-        public double BetMoney => BetInformation.BetMoney;
+        public double BetMoney => BetDatum.BetMoney;
 
         public double PayBack { get; set; }
 
@@ -207,17 +176,17 @@ namespace HorseRacingAutoPurchaser
 
         public double Profit => PayBack - BetMoney;
 
-        public SimulationResultOfBet(BetInformation betInformation, RaceResult raceResult)
+        public ResultOfBet(BetDatum betDatum, RaceResult raceResult)
         {
-            BetInformation = betInformation;
+            BetDatum = betDatum;
             RaceResult = raceResult;
             SetPayBack();
         }
 
         private void SetPayBack()
         {
-            var result = RaceResult.GetResultHorseAndPayoutOfTicket(BetInformation.TicketType);
-            PayBack = result.Item1.SequenceEqual(BetInformation.HorseNumList) ?
+            var result = RaceResult.GetResultHorseAndPayoutOfTicket(BetDatum.TicketType);
+            PayBack = result.Item1.SequenceEqual(BetDatum.HorseNumList) ?
                 result.Item2 * (BetMoney / 100) :
                 0.0;
         }
@@ -230,7 +199,7 @@ namespace HorseRacingAutoPurchaser
         public string ToCsv()
         {
             //Todo: Use Csv Helper
-            return $"{BetInformation.RaceData.HoldingDatum.HeldDate.ToString("yyyy/MM/dd")},{BetInformation.RaceData.HoldingDatum.Region.RegionName},{BetInformation.RaceData.RaceNumber},{BetInformation.TicketType.ToString()},{string.Join(" - ", BetInformation.HorseNumList)},{BetMoney},{PayBack},{Profit}";
+            return $"{BetDatum.RaceData.HoldingDatum.HeldDate.ToString("yyyy/MM/dd")},{BetDatum.RaceData.HoldingDatum.Region.RegionName},{BetDatum.RaceData.RaceNumber},{BetDatum.TicketType.ToString()},{string.Join(" - ", BetDatum.HorseNumList)},{BetMoney},{PayBack},{Profit}";
         }
     }
 }

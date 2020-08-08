@@ -1,28 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HorseRacingAutoPurchaser
 {
-    public class BetInformation 
+    [DataContract]
+    public class BetInformation
     {
+        [DataMember]
         public RaceData RaceData { get; set; }
-        public List<int> HorseNumList { get; set; }
-        public int BetMoney { get; set; }
-        public TicketType TicketType { get; set; }
-        public double ActualOdds { get; set; }
-        public double TheoreticalOdds { get; set; }
-        public double OddsRatio => TheoreticalOdds > 0 ? ActualOdds / TheoreticalOdds : Int32.MaxValue;
-        
 
-        public BetInformation(RaceData raceData, List<int> horseNumList, int betYen, double actualOdds, double theoreticalOdds, TicketType ticketType)
+        [DataMember]
+        public List<BetDatum> BetData { get; set; }
+
+        public BetInformation(RaceData raceData, List<BetDatum> betData)
         {
             RaceData = raceData;
-            HorseNumList = horseNumList;
-            BetMoney = betYen;
-            ActualOdds = actualOdds;
-            TheoreticalOdds = theoreticalOdds;
-            TicketType = ticketType;
+            BetData = betData;
+        }
+
+        public BetInformationRepository GetRepository()
+        {
+            return GetRepository(RaceData);
+        }
+
+        public static BetInformationRepository GetRepository(RaceData raceData)
+        {
+            var path = Utility.GetBetInformationFilePath(raceData);
+            return new BetInformationRepository(path);
         }
     }
 }

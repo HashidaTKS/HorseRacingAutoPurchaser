@@ -40,6 +40,7 @@ namespace HorseRacingAutoPurchaser
         {
             if (!AutoPurchaserMainTask.Running)
             {
+                StoreCurrentConfig();
                 AutoPurchaserMainTask.Run();
                 label_Running.Visible = true;
             }
@@ -56,6 +57,11 @@ namespace HorseRacingAutoPurchaser
 
         private void Button_SavePurchaseSetting_Click(object sender, EventArgs e)
         {
+            StoreCurrentConfig();
+        }
+
+        private void StoreCurrentConfig()
+        {
             var betConfig = new BetConfig();
             betConfig.QuinellaBetConfig.OddsRatio = (double)numericUpDown_QuinellaOddsRatio.Value;
             betConfig.QuinellaBetConfig.MinimumOdds = (double)numericUpDown_QuinellaMinimumOdds.Value;
@@ -64,6 +70,9 @@ namespace HorseRacingAutoPurchaser
             betConfig.QuinellaBetConfig.UseCocomo = checkBox_QuinellaUseCocomo.Checked;
             betConfig.QuinellaBetConfig.CocomoThreshold = (int)numericUpDown_QuinellaCocomoThreshold.Value;
             betConfig.QuinellaBetConfig.CocomoMaxMagnification = (int)numericUpDown_QuinellaCocomoMaxMagnification.Value;
+            betConfig.QuinellaBetConfig.PurchaseCentral = checkBox_PurchaseCentral.Checked;
+            betConfig.QuinellaBetConfig.PurchaseRegional = checkBox_PurchaseRegional.Checked;
+
             new BetConfigRepository().Store(betConfig);
         }
 
@@ -81,6 +90,8 @@ namespace HorseRacingAutoPurchaser
             checkBox_QuinellaUseCocomo.Checked = betConfig.QuinellaBetConfig.UseCocomo;
             numericUpDown_QuinellaCocomoThreshold.Value = betConfig.QuinellaBetConfig.CocomoThreshold;
             numericUpDown_QuinellaCocomoMaxMagnification.Value = betConfig.QuinellaBetConfig.CocomoMaxMagnification;
+            checkBox_PurchaseCentral.Checked = betConfig.QuinellaBetConfig.PurchaseCentral;
+            checkBox_PurchaseRegional.Checked = betConfig.QuinellaBetConfig.PurchaseRegional;
         }
     }
 }

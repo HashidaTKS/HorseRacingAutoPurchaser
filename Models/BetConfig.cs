@@ -9,12 +9,12 @@ namespace HorseRacingAutoPurchaser
     public class BetConfig
     {
         [DataMember]
-        public BetConfigForOneTicket QuinellaBetConfig { get; set; } = new BetConfigForOneTicket();
+        public BetConfigForTicketType QuinellaBetConfig { get; set; } = new BetConfigForTicketType();
     }
 
     [DataContract]
 
-    public class BetConfigForOneTicket
+    public class BetConfigForTicketType
     {
 
         /// <summary>
@@ -59,5 +59,22 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         [DataMember]
         public int CocomoMaxMagnification { get; set; } = 10;
+
+        /// <summary>
+        /// 中央競馬を買うかどうか。
+        /// </summary>
+        [DataMember]
+        public bool PurchaseCentral { get; set; } = true;
+
+        /// <summary>
+        /// 地方競馬を買うかどうか。
+        /// </summary>
+        [DataMember]
+        public bool PurchaseRegional { get; set; } = false;
+
+        /// <summary>
+        /// 最終的に算出されたベット額をさらに何倍するか。ココモ法などで動的に生成するので、永続化はしない。
+        /// </summary>
+        public int BetMoneyMagnification { get; set; } = 1;
     }
 }
