@@ -31,6 +31,29 @@ namespace HorseRacingAutoPurchaser
             }
         }
 
+        public static IEnumerable<List<T>> GetContainedList<T>(IEnumerable<T> contained, IEnumerable<List<T>> checkTargetList)
+        {
+            foreach(var checkTarget in checkTargetList){
+                if (CombinationalContain(contained, checkTarget))
+                {
+                    yield return checkTarget;
+                }
+            }
+        }
+
+        public static bool CombinationalContain<T>(IEnumerable<T> contained , IEnumerable<T> checkTarget)
+        {
+            foreach (var elem in contained)
+            {
+                if (!checkTarget.Contains(elem))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
         /// <summary>
         /// 順列を取得する
         /// </summary>

@@ -27,6 +27,10 @@ namespace HorseRacingAutoPurchaser
         [DataMember]
         public List<OddsDatum> TrioOdds { get; set; }
 
+        //実オッズの場合、最もオッズを表す
+        [DataMember]
+        public List<OddsDatum> WideOdds { get; set; }
+
         [DataMember]
         public DateTime LastUpadateUtcTime;
 

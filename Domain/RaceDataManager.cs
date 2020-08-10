@@ -43,7 +43,7 @@ namespace HorseRacingAutoPurchaser
             var holdingInformationRepository = new HoldingInformationRepository();
             var currentHoldingInformation = holdingInformationRepository.ReadAll();
 
-            if(currentHoldingInformation == null || currentHoldingInformation.HoldingData.Any(_ => _.HeldDate.Date == date.Date))
+            if(currentHoldingInformation == null || !currentHoldingInformation.HoldingData.Any(_ => _.HeldDate.Date == date.Date))
             {
                 try
                 {

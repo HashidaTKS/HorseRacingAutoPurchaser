@@ -75,6 +75,7 @@ namespace HorseRacingAutoPurchaser
             { TicketType.Quinella , "type=b4" },
             { TicketType.Trifecta , "type=b8" },
             { TicketType.Trio , "type=b7" },
+            { TicketType.Wide , "type=b5" },
         };
 
         public static string GetRaceAndOddsDataFilePath(RaceData raceInfo, OddsType oddsType)

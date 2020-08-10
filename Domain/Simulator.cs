@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace HorseRacingAutoPurchaser
 {
     public class Simulater
     {
-        public static TotalResultOfBet Simulate(DateTime from, DateTime to, bool useOnlySavedData = false)
+        public static TotalResultOfBet Simulate(DateTime from, DateTime to, BetConfig betConfig, CancellationToken cancelToken, bool useOnlySavedData = false)
         {
             if (useOnlySavedData)
             {
-                return SimulateInner(from, to, null, useOnlySavedData);
+                return SimulateInner(from, to, null, betConfig, cancelToken, useOnlySavedData);
             }
             using (var scraper = new Scraper())
             {
-                return SimulateInner(from, to, scraper, useOnlySavedData);
+                return SimulateInner(from, to, scraper, betConfig, cancelToken, useOnlySavedData);
             }
 
         }
 
-        public static TotalResultOfBet SimulateInner(DateTime from, DateTime to, Scraper scraper, bool useOnlySavedData = false)
+        public static TotalResultOfBet SimulateInner(DateTime from, DateTime to, Scraper scraper, BetConfig betConfig, CancellationToken cancelToken,  bool useOnlySavedData = false)
         {
 
             if (to >= DateTime.Today)
@@ -32,16 +33,66 @@ namespace HorseRacingAutoPurchaser
 
             if (!useOnlySavedData)
             {
-                //RaceResultManager.UpdateResultDataIfNeed(from, to);
+                for (var date = from; date <= to; date = date.AddDays(1))
+                {
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        return null;
+                    }
+                    RaceResultManager.UpdateResultDataIfNeed(scraper, date, date);
+
+                    //UpdateResultDataIfNeedの中でレース情報がなければ取得されているので、保存済みのもののみを対象にする。
+                    foreach (var targetRace in RaceDataManager.GetRaceDataOfDay(date))
+                    {
+                        if (cancelToken.IsCancellationRequested)
+                        {
+                            return null;
+                        }
+                        if (targetRace.HoldingDatum.Region.RagionType == RegionType.Central)
+                        {
+                            if (!betConfig.QuinellaBetConfig.PurchaseCentral && !betConfig.WideBetConfig.PurchaseCentral)
+                            {
+                                continue;
+                            }
+                        }
+                        if (targetRace.HoldingDatum.Region.RagionType == RegionType.Regional)
+                        {
+                            if (!betConfig.QuinellaBetConfig.PurchaseRegional && !betConfig.WideBetConfig.PurchaseRegional)
+                            {
+                                continue;
+                            }
+                        }
+                        var actualRaceAndOddsData = new ActualRaceAndOddsData(targetRace);
+                        var repo = actualRaceAndOddsData.GetRepository();
+                        var savedData = repo.ReadAll();
+                        if (savedData == null)
+                        {
+                            actualRaceAndOddsData.SetData(scraper);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                        repo.Store(actualRaceAndOddsData);
+                    }
+                }
             }
 
-            var outputRaceDataList = RaceDataForComparisonManager.Get(from, to).ToList();
-           
-            var groupedOutputRaceDataList = outputRaceDataList.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central).GroupBy(_ => _.RaceData.HoldingDatum.HeldDate);
-            //var groupedOutputRaceDataList = outputRaceDataList.GroupBy(_ => _.RaceUrlInformation.HoldingDatum.HeldDate);
+            var raceDataForComparisonManager = RaceDataForComparisonManager.Get(from, to).ToList();
+            var outputRaceDataList = new List<RaceDataForComparison>(); 
+
+            if(betConfig.QuinellaBetConfig.PurchaseCentral || betConfig.WideBetConfig.PurchaseCentral)
+            {
+                outputRaceDataList.AddRange(outputRaceDataList.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central));
+            }
+            if (betConfig.QuinellaBetConfig.PurchaseRegional || betConfig.WideBetConfig.PurchaseRegional)
+            {
+                outputRaceDataList.AddRange(outputRaceDataList.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Regional));
+            }
+            
+            var groupedOutputRaceDataList = outputRaceDataList.GroupBy(_ => _.RaceData.HoldingDatum.HeldDate);
             var totalResult = new List<DailyResultOfBet>();
-            var loseCount = 0;
-            var cocomo = new Cocomo();
+            var betResultStatus = new BetResultStatus();
             foreach (var oneDayOutputRaceDataList in groupedOutputRaceDataList)
             {
                 var resultList = new List<ResultOfBet>();
@@ -54,10 +105,35 @@ namespace HorseRacingAutoPurchaser
                         continue;
                     }
 
-                    var betData = TicketSelector.SelectToBet(outputRaceData, null, null);
+                    var betData = TicketSelector.SelectToBet(outputRaceData, betConfig, betResultStatus);
                     foreach (var betDatum in betData)
                     {
                         var simulationResultOfBet = new ResultOfBet(betDatum, raceResult);
+                        switch (betDatum.TicketType)
+                        {
+                            case TicketType.Quinella:
+                                if (simulationResultOfBet.IsHit)
+                                {
+                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose = 0;
+                                }
+                                else
+                                {
+                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose++;
+                                }
+                                break;
+                            case TicketType.Wide:
+                                if (simulationResultOfBet.IsHit)
+                                {
+                                    betResultStatus.WideBetStatus.CountOfContinuationLose = 0;
+                                }
+                                else
+                                {
+                                    betResultStatus.WideBetStatus.CountOfContinuationLose++;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
                         resultList.Add(simulationResultOfBet);
                     }
                 }
@@ -180,15 +256,20 @@ namespace HorseRacingAutoPurchaser
         {
             BetDatum = betDatum;
             RaceResult = raceResult;
-            SetPayBack();
+            PayBack = GetPayBack();
         }
 
-        private void SetPayBack()
+        private double GetPayBack()
         {
-            var result = RaceResult.GetResultHorseAndPayoutOfTicket(BetDatum.TicketType);
-            PayBack = result.Item1.SequenceEqual(BetDatum.HorseNumList) ?
-                result.Item2 * (BetMoney / 100) :
-                0.0;
+            var results = RaceResult.GetResultHorseAndPayoutOfTicket(BetDatum.TicketType);
+            foreach (var result in results)
+            {
+                if (result.Item1.SequenceEqual(BetDatum.HorseNumList))
+                {
+                    return result.Item2 * (BetMoney / 100);
+                }
+            }
+            return 0.0;
         }
 
         public static string GetCsvHeader()

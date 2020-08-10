@@ -41,6 +41,7 @@ namespace HorseRacingAutoPurchaser
         public AutoPurchaser(LoginConfig loginConfig)
         {
             var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArguments("headless", "disable-gpu");
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
             LoginConfig = loginConfig;
         }
@@ -205,19 +206,21 @@ namespace HorseRacingAutoPurchaser
 
         private bool PurchaseAtRakutenKeiba(List<BetDatum> betInfoList)
         {
-            var url = "https://bet.keiba.rakuten.co.jp/bet_lite";
 
-            Chrome.Url = url;
-
-            //画面の切り替わり完了待ち
-            Thread.Sleep(1 * 1000);
-
-            LoginToRakutenIfNeeded(Chrome);
 
             foreach (var betInfo in betInfoList)
             {
                 try
                 {
+                    var url = "https://bet.keiba.rakuten.co.jp/bet_lite";
+
+                    Chrome.Url = url;
+
+                    //画面の切り替わり完了待ち
+                    Thread.Sleep(1 * 1000);
+
+                    LoginToRakutenIfNeeded(Chrome);
+
                     var contents = Chrome.FindElementById("contents");
 
                     var racecourseId = Chrome.FindElementByName("racecourseId");
@@ -267,7 +270,7 @@ namespace HorseRacingAutoPurchaser
                 {
                     Console.WriteLine("Could not Purchace.");
                     Console.WriteLine(ex);
-                    //これ。途中まで成功していると重複購入する可能性がある。よくない。
+                    //これ。途中まで成功している可能性がある。よくない。
                     return false;
 
                 }

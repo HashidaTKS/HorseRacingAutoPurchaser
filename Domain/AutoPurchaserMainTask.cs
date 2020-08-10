@@ -18,12 +18,11 @@ namespace HorseRacingAutoPurchaser
             {
                 return;
             }
-            var cocomo = new Cocomo();
             CancellationTokenSource = new CancellationTokenSource();
             var cancelToken = CancellationTokenSource.Token;
             var betConfig = new BetConfigRepository().ReadAll();
             Task.Run(() =>
-            {
+            {                
                 if (cancelToken.IsCancellationRequested)
                 {
                     return;
@@ -105,68 +104,78 @@ namespace HorseRacingAutoPurchaser
                         var statusCheckTargetTime = DateTime.Now.AddHours(-1);
                         var statusCheckStart = betResultStatus.CheckedTime > monthBefore ? betResultStatus.CheckedTime : monthBefore;
 
+
                         for (var date = statusCheckStart; date < statusCheckTargetTime; date = date.AddDays(1))
                         {
-                            if (cancelToken.IsCancellationRequested)
+                            try
                             {
-                                return;
-                            }
-                            foreach (var targetRace in RaceDataManager.GetRaceDataOfDay(date.Date))
-                            {
-                                if (targetRace == null)
+                                if (cancelToken.IsCancellationRequested)
                                 {
-                                    continue;
+                                    return;
                                 }
-                                if (targetRace.StartTime > statusCheckTargetTime)
+                                foreach (var targetRace in RaceDataManager.GetRaceDataOfDay(date.Date))
                                 {
-                                    //本日のまだ確定していないデータの可能性があるので、スキップ
-                                    continue;
-                                }
-                                if (targetRace.StartTime < statusCheckStart)
-                                {
-                                    //確認済みなのでスキップ
-                                    continue;
-                                }
-
-
-                                try
-                                {
-                                    RaceResultManager.UpdateResultDataIfNeed(scraper, targetRace);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex);
-                                    continue;
-                                }
-
-                                var betInformation = BetInformation.GetRepository(targetRace).ReadAll();
-                                if (betInformation == null)
-                                {
-                                    continue;
-                                }
-
-                                var raceResult = RaceResult.GetRepository(targetRace).ReadAll();
-                                foreach (var betDatum in betInformation.BetData)
-                                {
-                                    var resultOfBet = new ResultOfBet(betDatum, raceResult);
-                                    switch (betDatum.TicketType)
+                                    if (targetRace == null)
                                     {
-                                        case TicketType.Quinella:
-                                            if (resultOfBet.IsHit)
-                                            {
-                                                betResultStatus.QuinellaBetStatus.CountOfContinuationLose = 0;
-                                            }
-                                            else
-                                            {
-                                                betResultStatus.QuinellaBetStatus.CountOfContinuationLose++;
-                                            }
-                                            break;
-                                        default:
-                                            break;
+                                        continue;
+                                    }
+                                    if (targetRace.StartTime > statusCheckTargetTime)
+                                    {
+                                        //本日のまだ確定していないデータの可能性があるので、スキップ
+                                        continue;
+                                    }
+                                    if (targetRace.StartTime < statusCheckStart)
+                                    {
+                                        //確認済みなのでスキップ
+                                        continue;
+                                    }
+
+
+                                    try
+                                    {
+                                        RaceResultManager.UpdateResultDataIfNeed(scraper, targetRace);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex);
+                                        continue;
+                                    }
+
+                                    var betInformation = BetInformation.GetRepository(targetRace).ReadAll();
+                                    if (betInformation == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    var raceResult = RaceResult.GetRepository(targetRace).ReadAll();
+                                    foreach (var betDatum in betInformation.BetData)
+                                    {
+                                        var resultOfBet = new ResultOfBet(betDatum, raceResult);
+                                        switch (betDatum.TicketType)
+                                        {
+                                            case TicketType.Quinella:
+                                                if (resultOfBet.IsHit)
+                                                {
+                                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose = 0;
+                                                }
+                                                else
+                                                {
+                                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose++;
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
                                     }
                                 }
                             }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                                continue;
+                            }
                         }
+
                         betResultStatus.CheckedTime = statusCheckTargetTime;
                         betResultStatusRepo.Store(betResultStatus);
 

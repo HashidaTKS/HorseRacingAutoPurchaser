@@ -20,6 +20,11 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         [DataMember]
         public BetResultStatusOfTicketType QuinellaBetStatus { get; set; } = new BetResultStatusOfTicketType();
+        /// <summary>
+        /// ワイドのステータス
+        /// </summary>
+        [DataMember]
+        public BetResultStatusOfTicketType WideBetStatus { get; set; } = new BetResultStatusOfTicketType();
     }
 
     [DataContract]

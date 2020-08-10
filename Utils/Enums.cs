@@ -27,6 +27,8 @@ namespace HorseRacingAutoPurchaser
         //三連単
         Trifecta = 3,
         //三連複
-        Trio = 4
+        Trio = 4,
+        //ワイド
+        Wide = 5,
     }
 }

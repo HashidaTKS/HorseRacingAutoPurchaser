@@ -30,6 +30,8 @@ namespace HorseRacingAutoPurchaser
             LastUpadateUtcTime = DateTime.UtcNow;
             WinOdds = calculator.GetAllWinOdds().OrderBy(_ => _.Odds).ToList();
             QuinellaOdds = calculator.GetAllQuinellaOdds(2).OrderBy(_ => _.Odds).ToList();
+            WideOdds = calculator.GetAllWideOdds().OrderBy(_ => _.Odds).ToList();
+
             //今は使わないので敢えて取得しない
             //ExactaOdds = calculator.GetAllExactaOdds(2).OrderBy(_ => _.Odds).ToList();
             //TrifectaOdds = calculator.GetAllExactaOdds(3).OrderBy(_ => _.Odds).ToList();

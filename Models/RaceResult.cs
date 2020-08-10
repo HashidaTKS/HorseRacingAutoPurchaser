@@ -10,12 +10,16 @@ namespace HorseRacingAutoPurchaser
     [DataContract]
     public class RaceResult
     {
+        //TODO:馬とPayoutの組み合わせをクラス化する
 
         [DataMember]
         public RaceData RaceData { get; set; }
 
         [DataMember]
         public double WinPayout { get; set; }
+
+        [DataMember]
+        public List<double> WidePayoutList { get; set; }
 
         [DataMember]
         public double QuinellaPayout { get; set; }
@@ -31,6 +35,9 @@ namespace HorseRacingAutoPurchaser
 
         [DataMember]
         public List<int> WinHorse { get; set; }
+
+        [DataMember]
+        public List<List<int>> WideHorseList { get; set; }
 
         [DataMember]
         public List<int> QuinellaHorseList { get; set; }
@@ -49,21 +56,33 @@ namespace HorseRacingAutoPurchaser
             RaceData = raceData;
         }
 
-        public (List<int>, double) GetResultHorseAndPayoutOfTicket(TicketType ticketType)
+        public IEnumerable<(List<int>, double)> GetResultHorseAndPayoutOfTicket(TicketType ticketType)
         {
             switch (ticketType)
             {
                 default:
                 case TicketType.Win:
-                    return (WinHorse, WinPayout);
+                    yield return (WinHorse, WinPayout);
+                    yield break;
                 case TicketType.Quinella:
-                    return (QuinellaHorseList, QuinellaPayout);
+                    yield return(QuinellaHorseList, QuinellaPayout);
+                    yield break;
                 case TicketType.Exacta:
-                    return (ExtractHorseList, ExtractPayout);
+                    yield return(ExtractHorseList, ExtractPayout);
+                    yield break;
                 case TicketType.Trio:
-                    return (TrioHorseList, TrioPayout);
+                    yield return(TrioHorseList, TrioPayout);
+                    yield break;
                 case TicketType.Trifecta:
-                    return (TrifectaHorseList, TrifectaPayout);
+                    yield return(TrifectaHorseList, TrifectaPayout);
+                    yield break;
+                case TicketType.Wide:
+                    var count = WideHorseList?.Count ?? 0;
+                    for(var i = 0; i < count; i++)
+                    {
+                        yield return (WideHorseList[i], WidePayoutList[i]);
+                    }
+                    yield break;
             }
         }
 

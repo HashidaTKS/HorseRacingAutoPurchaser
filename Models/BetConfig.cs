@@ -10,6 +10,9 @@ namespace HorseRacingAutoPurchaser
     {
         [DataMember]
         public BetConfigForTicketType QuinellaBetConfig { get; set; } = new BetConfigForTicketType();
+
+        [DataMember]
+        public BetConfigForTicketType WideBetConfig { get; set; } = new BetConfigForTicketType();
     }
 
     [DataContract]
@@ -22,19 +25,19 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         [DataMember]
 
-        public double OddsRatio { get; set; } = 1.4;
+        public double OddsRatio { get; set; } = 5;
 
         /// <summary>
         /// 最低払い戻し金額。払い戻しがこの金額以上になるようにオッズ額を修正する。
         /// </summary>
         [DataMember]
-        public double MinimumPayBack { get; set; } = 5000;
+        public double MinimumPayBack { get; set; } = 3000;
 
         /// <summary>
         /// 購入しても良い最低オッズ
         /// </summary>
         [DataMember]
-        public double MinimumOdds { get; set; } = 5;
+        public double MinimumOdds { get; set; } = 1.3;
 
         /// <summary>
         /// 購入しても良い最大オッズ
@@ -58,7 +61,7 @@ namespace HorseRacingAutoPurchaser
         /// ココモ法を使う場合に、許容可能な倍率（この倍率になったら加算をやめる）
         /// </summary>
         [DataMember]
-        public int CocomoMaxMagnification { get; set; } = 10;
+        public int CocomoMaxMagnification { get; set; } = 5;
 
         /// <summary>
         /// 中央競馬を買うかどうか。
@@ -73,8 +76,9 @@ namespace HorseRacingAutoPurchaser
         public bool PurchaseRegional { get; set; } = false;
 
         /// <summary>
-        /// 最終的に算出されたベット額をさらに何倍するか。ココモ法などで動的に生成するので、永続化はしない。
+        /// 一度に購入できる最大チケット数
         /// </summary>
-        public int BetMoneyMagnification { get; set; } = 1;
+        [DataMember]
+        public int MaxPurchaseCount { get; set; } = 3;
     }
 }

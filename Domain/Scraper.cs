@@ -67,7 +67,7 @@ namespace HorseRacingAutoPurchaser
         private IEnumerable<OddsDatum> GetFromPopularTable(ReadOnlyCollection<IWebElement> trCollection, TicketType ticketType)
         {
             var rank = 1;
-            if (ticketType == TicketType.Exacta || ticketType == TicketType.Quinella)
+            if (ticketType == TicketType.Exacta || ticketType == TicketType.Quinella || ticketType == TicketType.Wide)
             {
                 rank = 2;
             }
@@ -94,9 +94,9 @@ namespace HorseRacingAutoPurchaser
 
                     horseData.Add(new HorseDatum(horse, -1, "", ""));
                 }
-                if (!double.TryParse(tdList[startIndexOfHorseNumber - 1].Text, out var odds))
+                if (!double.TryParse(tdList[startIndexOfHorseNumber - 1].Text.Replace("\r","").Replace("\n", "").Split(' ')[0], out var odds))
                 {
-                    //パースに失敗する->出走取消
+                    //パースに失敗する->出走取消、存在しない券種（ワイドなど）だった
                     continue;
                 }
                 yield return new OddsDatum(horseData, odds);
@@ -146,10 +146,15 @@ namespace HorseRacingAutoPurchaser
                 var trifectaHorseString = secondPayoutTable.FindElement(By.ClassName("Tan3")).FindElement(By.ClassName("Result")).Text;
                 var trifectaPayoutString = secondPayoutTable.FindElement(By.ClassName("Tan3")).FindElement(By.ClassName("Payout")).Text;
 
+                var wideHorseStringList = secondPayoutTable.FindElement(By.ClassName("Wide")).FindElement(By.ClassName("Result")).FindElements(By.TagName("ul")).Select(_ => _.Text);
+                var wideHorsePayoutString = secondPayoutTable.FindElement(By.ClassName("Wide")).FindElement(By.ClassName("Payout")).Text.Replace("\r", "").Split('\n');
+
                 return new RaceResult(raceData)
                 {
                     WinHorse = WinHorsesStringToList(winHorseString),
                     WinPayout = PayOutStringToDouble(winPayoutString),
+                    WideHorseList = wideHorseStringList.Select(WinHorsesStringToList).ToList(),
+                    WidePayoutList = wideHorsePayoutString.Select(PayOutStringToDouble).ToList(),
                     QuinellaHorseList = WinHorsesStringToList(quinellaHorseString),
                     QuinellaPayout = PayOutStringToDouble(quinellaPayoutString),
                     ExtractHorseList = WinHorsesStringToList(extractHorseString),

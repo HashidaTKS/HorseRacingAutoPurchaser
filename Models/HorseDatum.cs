@@ -12,13 +12,10 @@ namespace HorseRacingAutoPurchaser
         [DataMember]
         public int Number { get; set; }
 
-        [DataMember]
         public double WinProbability { get; set; }
 
-        [DataMember]
         public string Name { get; set; }
 
-        [DataMember]
         public string Jockey { get; set; }
 
         public HorseDatum(){

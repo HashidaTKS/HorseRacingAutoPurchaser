@@ -48,6 +48,20 @@ namespace HorseRacingAutoPurchaser
             }
         }
 
+        /// <summary>
+        /// あるN連複の全組み合わせの理論値を返す
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <returns></returns>
+        public IEnumerable<OddsDatum> GetAllWideOdds()
+        {
+            var allCombination = EnumerableUtils.GetCombination(HorseData, 2, false);
+            foreach (var combination in allCombination)
+            {
+                yield return GetWideOdds(combination);
+            }
+        }
+
 
         /// <summary>
         /// N連単の理論値を計算する
@@ -92,7 +106,28 @@ namespace HorseRacingAutoPurchaser
             }
             var odds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
             return new OddsDatum(horseData, odds);
+        }
 
+        /// <summary>
+        /// ワイドの理論値を計算する。
+        /// </summary>
+        /// <param name="horseData"></param>
+        /// <returns></returns>
+        public OddsDatum GetWideOdds(List<HorseDatum> horseData)
+        {
+            //ワイドの理論値は、三連単のうち、指定の馬が含まれている全ての組み合わせの総和とする。
+            var numberList = horseData.Select(_ => _.Number).ToList();
+            var restHorseData = HorseData.Where(_ => !numberList.Contains(_.Number));
+            var expectedProbability = 0.0;
+
+            foreach (var restHorseDatum in restHorseData)
+            {
+                var odds = GetQuinellaOdds(horseData.Append(restHorseDatum).ToList()).Odds;
+                expectedProbability += 1 / odds;
+            }
+
+            var totalOdds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
+            return new OddsDatum(horseData, totalOdds);
         }
     }
 }

@@ -18,6 +18,7 @@ namespace HorseRacingAutoPurchaser
         {
             WinOdds = scraper.GetOdds(BaseRaceData, TicketType.Win).OrderBy(_ => _.Odds).ToList();
             QuinellaOdds = scraper.GetOdds(BaseRaceData, TicketType.Quinella).OrderBy(_ => _.Odds).ToList();
+            WideOdds = scraper.GetOdds(BaseRaceData, TicketType.Wide).OrderBy(_ => _.Odds).ToList();
             //今は使わないので敢えて取得しない
             //ExactaOdds = scraper.GetOdds(RaceUrlInformation, TicketType.Exacta).OrderBy(_ => _.Odds).ToList();
             //TrifectaOdds = scraper.GetOdds(RaceUrlInformation, TicketType.Trifecta).OrderBy(_ => _.Odds).ToList();
