@@ -22,7 +22,7 @@ namespace HorseRacingAutoPurchaser
 
         }
 
-        public static TotalResultOfBet SimulateInner(DateTime from, DateTime to, Scraper scraper, BetConfig betConfig, CancellationToken cancelToken,  bool useOnlySavedData = false)
+        public static TotalResultOfBet SimulateInner(DateTime from, DateTime to, Scraper scraper, BetConfig betConfig, CancellationToken cancelToken, bool useOnlySavedData = false)
         {
 
             if (to >= DateTime.Today)
@@ -50,14 +50,14 @@ namespace HorseRacingAutoPurchaser
                         }
                         if (targetRace.HoldingDatum.Region.RagionType == RegionType.Central)
                         {
-                            if (!betConfig.QuinellaBetConfig.PurchaseCentral && !betConfig.WideBetConfig.PurchaseCentral)
+                            if (!betConfig.ContainCentral())
                             {
                                 continue;
                             }
                         }
                         if (targetRace.HoldingDatum.Region.RagionType == RegionType.Regional)
                         {
-                            if (!betConfig.QuinellaBetConfig.PurchaseRegional && !betConfig.WideBetConfig.PurchaseRegional)
+                            if (!betConfig.ContainRegional())
                             {
                                 continue;
                             }
@@ -79,17 +79,17 @@ namespace HorseRacingAutoPurchaser
             }
 
             var raceDataForComparisonManager = RaceDataForComparisonManager.Get(from, to).ToList();
-            var outputRaceDataList = new List<RaceDataForComparison>(); 
+            var outputRaceDataList = new List<RaceDataForComparison>();
 
-            if(betConfig.QuinellaBetConfig.PurchaseCentral || betConfig.WideBetConfig.PurchaseCentral)
+            if (betConfig.ContainCentral())
             {
-                outputRaceDataList.AddRange(outputRaceDataList.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central));
+                outputRaceDataList.AddRange(raceDataForComparisonManager.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central));
             }
-            if (betConfig.QuinellaBetConfig.PurchaseRegional || betConfig.WideBetConfig.PurchaseRegional)
+            if (betConfig.ContainRegional())
             {
-                outputRaceDataList.AddRange(outputRaceDataList.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Regional));
+                outputRaceDataList.AddRange(raceDataForComparisonManager.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Regional));
             }
-            
+
             var groupedOutputRaceDataList = outputRaceDataList.GroupBy(_ => _.RaceData.HoldingDatum.HeldDate);
             var totalResult = new List<DailyResultOfBet>();
             var betResultStatus = new BetResultStatus();
@@ -109,31 +109,17 @@ namespace HorseRacingAutoPurchaser
                     foreach (var betDatum in betData)
                     {
                         var simulationResultOfBet = new ResultOfBet(betDatum, raceResult);
-                        switch (betDatum.TicketType)
+
+                        var targetStatus = betResultStatus.GetTicketTypeStatus(betDatum.TicketType);
+                        if (simulationResultOfBet.IsHit)
                         {
-                            case TicketType.Quinella:
-                                if (simulationResultOfBet.IsHit)
-                                {
-                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose = 0;
-                                }
-                                else
-                                {
-                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose++;
-                                }
-                                break;
-                            case TicketType.Wide:
-                                if (simulationResultOfBet.IsHit)
-                                {
-                                    betResultStatus.WideBetStatus.CountOfContinuationLose = 0;
-                                }
-                                else
-                                {
-                                    betResultStatus.WideBetStatus.CountOfContinuationLose++;
-                                }
-                                break;
-                            default:
-                                break;
+                            targetStatus.CountOfContinuationLose = 0;
                         }
+                        else
+                        {
+                            targetStatus.CountOfContinuationLose += 1;
+                        }
+
                         resultList.Add(simulationResultOfBet);
                     }
                 }
@@ -262,11 +248,27 @@ namespace HorseRacingAutoPurchaser
         private double GetPayBack()
         {
             var results = RaceResult.GetResultHorseAndPayoutOfTicket(BetDatum.TicketType);
-            foreach (var result in results)
+
+            //Todo: 綺麗にする
+            if (BetDatum.TicketType == TicketType.Quinella || BetDatum.TicketType == TicketType.Wide || BetDatum.TicketType == TicketType.Trio)
             {
-                if (result.Item1.SequenceEqual(BetDatum.HorseNumList))
+                foreach (var result in results)
                 {
-                    return result.Item2 * (BetMoney / 100);
+                    //元々並びは同じはずだが、一応
+                    if (result.Item1.OrderBy(_ => _).SequenceEqual(BetDatum.HorseNumList.OrderBy(_ => _)))
+                    {
+                        return result.Item2 * (BetMoney / 100);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var result in results)
+                {
+                    if (result.Item1.SequenceEqual(BetDatum.HorseNumList))
+                    {
+                        return result.Item2 * (BetMoney / 100);
+                    }
                 }
             }
             return 0.0;

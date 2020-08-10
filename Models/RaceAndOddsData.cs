@@ -38,5 +38,25 @@ namespace HorseRacingAutoPurchaser
         {
             BaseRaceData = raceData;
         }
+
+        public List<OddsDatum> GetOddsOfTicketType(TicketType ticketType)
+        {
+            switch (ticketType)
+            {
+                default:
+                case TicketType.Win:
+                    return WinOdds;
+                case TicketType.Exacta:
+                    return ExactaOdds;
+                case TicketType.Quinella:
+                    return QuinellaOdds;
+                case TicketType.Trifecta:
+                    return TrifectaOdds;
+                case TicketType.Trio:
+                    return TrioOdds;
+                case TicketType.Wide:
+                    return WideOdds;
+            }
+        }
     }
 }

@@ -270,6 +270,12 @@
     <Compile Include="Models\TheoreticalRaceAndOddsData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OddsConfigForTicketTypeUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OddsConfigForTicketTypeUserControl.Designer.cs">
+      <DependentUpon>OddsConfigForTicketTypeUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\EnumerableUtils.cs" />
     <Compile Include="Utils\Enums.cs" />
     <Compile Include="Utils\RssAccessor.cs" />
@@ -289,6 +295,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="OddsConfigForTicketTypeUserControl.resx">
+      <DependentUpon>OddsConfigForTicketTypeUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

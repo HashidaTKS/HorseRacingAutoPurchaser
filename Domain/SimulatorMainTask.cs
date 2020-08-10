@@ -22,7 +22,6 @@ namespace HorseRacingAutoPurchaser
             CancellationTokenSource = new CancellationTokenSource();
             var cancelToken = CancellationTokenSource.Token;
             var betConfig = new BetConfigRepository().ReadAll();
-            betConfig.WideBetConfig = betConfig.QuinellaBetConfig;
             Task.Run(() =>
             {
                 if (cancelToken.IsCancellationRequested)
@@ -32,7 +31,7 @@ namespace HorseRacingAutoPurchaser
                 var from = new DateTime(2020, 1, 1);
                 var to = new DateTime(2020, 7, 15);
 
-                Simulater.Simulate(from, to, betConfig, cancelToken);
+                var result = Simulater.Simulate(from, to, betConfig, cancelToken, false);
             }, cancelToken);
         }
 

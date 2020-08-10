@@ -50,7 +50,8 @@ namespace HorseRacingAutoPurchaser
                     //別々に取得しなきゃいけないのおかしくね
                     var centralHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Central);
                     var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
-                    currentHoldingInformation = centralHoldingInformation.MargeStatus(regionalHoldingInformation);
+
+                    currentHoldingInformation = currentHoldingInformation.MargeStatus(centralHoldingInformation).MargeStatus(regionalHoldingInformation);
                     new HoldingInformationRepository().Store(currentHoldingInformation);
                 }
                 catch(Exception ex)

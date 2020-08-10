@@ -32,47 +32,18 @@
             this.button_LoginConfig = new System.Windows.Forms.Button();
             this.button_AutoPurchase_Cancel = new System.Windows.Forms.Button();
             this.label_Running = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown_QuinellaMaxPurchaseCount = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.groupBox_PurchaseTarget = new System.Windows.Forms.GroupBox();
-            this.checkBox_PurchaseCentral = new System.Windows.Forms.CheckBox();
-            this.checkBox_PurchaseRegional = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.radioButton_QuinellaNoBetTactics = new System.Windows.Forms.RadioButton();
-            this.radioButton_QuinellaUseCocomo = new System.Windows.Forms.RadioButton();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown_QuinellaCocomoMaxMagnification = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_QuinellaCocomoThreshold = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.numericUpDown_QuinnelaMinimumPayBack = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_QuinellaMaximumOdds = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_QuinellaMinimumOdds = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_QuinellaOddsRatio = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.button_SavePurchaseSetting = new System.Windows.Forms.Button();
             this.button_ResetPurchaseSetting = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMaxPurchaseCount)).BeginInit();
-            this.groupBox_PurchaseTarget.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoMaxMagnification)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoThreshold)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinnelaMinimumPayBack)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMaximumOdds)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMinimumOdds)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaOddsRatio)).BeginInit();
+            this.button_ExecSimulation = new System.Windows.Forms.Button();
+            this.oddsConfigForTicketTypeUserControl_Quinella = new HorseRacingAutoPurchaser.OddsConfigForTicketTypeUserControl();
+            this.oddsConfigForTicketTypeUserControl_Wide = new HorseRacingAutoPurchaser.OddsConfigForTicketTypeUserControl();
+            this.userControl_Wide = new HorseRacingAutoPurchaser.OddsConfigForTicketTypeUserControl();
+            this.button_StopSimulation = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button_AutoPurchase
             // 
-            this.button_AutoPurchase.Location = new System.Drawing.Point(584, 258);
+            this.button_AutoPurchase.Location = new System.Drawing.Point(570, 459);
             this.button_AutoPurchase.Name = "button_AutoPurchase";
             this.button_AutoPurchase.Size = new System.Drawing.Size(107, 23);
             this.button_AutoPurchase.TabIndex = 0;
@@ -82,7 +53,7 @@
             // 
             // button_LoginConfig
             // 
-            this.button_LoginConfig.Location = new System.Drawing.Point(703, 12);
+            this.button_LoginConfig.Location = new System.Drawing.Point(683, 8);
             this.button_LoginConfig.Name = "button_LoginConfig";
             this.button_LoginConfig.Size = new System.Drawing.Size(85, 23);
             this.button_LoginConfig.TabIndex = 1;
@@ -92,7 +63,7 @@
             // 
             // button_AutoPurchase_Cancel
             // 
-            this.button_AutoPurchase_Cancel.Location = new System.Drawing.Point(702, 258);
+            this.button_AutoPurchase_Cancel.Location = new System.Drawing.Point(683, 459);
             this.button_AutoPurchase_Cancel.Name = "button_AutoPurchase_Cancel";
             this.button_AutoPurchase_Cancel.Size = new System.Drawing.Size(85, 23);
             this.button_AutoPurchase_Cancel.TabIndex = 2;
@@ -104,358 +75,16 @@
             // 
             this.label_Running.AutoSize = true;
             this.label_Running.ForeColor = System.Drawing.Color.Red;
-            this.label_Running.Location = new System.Drawing.Point(18, 12);
+            this.label_Running.Location = new System.Drawing.Point(12, 13);
             this.label_Running.Name = "label_Running";
             this.label_Running.Size = new System.Drawing.Size(65, 12);
             this.label_Running.TabIndex = 5;
             this.label_Running.Text = "自動購入中";
             this.label_Running.Visible = false;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.numericUpDown_QuinellaMaxPurchaseCount);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.groupBox_PurchaseTarget);
-            this.groupBox1.Controls.Add(this.groupBox2);
-            this.groupBox1.Controls.Add(this.numericUpDown_QuinnelaMinimumPayBack);
-            this.groupBox1.Controls.Add(this.numericUpDown_QuinellaMaximumOdds);
-            this.groupBox1.Controls.Add(this.numericUpDown_QuinellaMinimumOdds);
-            this.groupBox1.Controls.Add(this.numericUpDown_QuinellaOddsRatio);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 52);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(776, 190);
-            this.groupBox1.TabIndex = 6;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "馬連設定";
-            // 
-            // numericUpDown_QuinellaMaxPurchaseCount
-            // 
-            this.numericUpDown_QuinellaMaxPurchaseCount.Location = new System.Drawing.Point(138, 111);
-            this.numericUpDown_QuinellaMaxPurchaseCount.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaMaxPurchaseCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaMaxPurchaseCount.Name = "numericUpDown_QuinellaMaxPurchaseCount";
-            this.numericUpDown_QuinellaMaxPurchaseCount.Size = new System.Drawing.Size(101, 19);
-            this.numericUpDown_QuinellaMaxPurchaseCount.TabIndex = 15;
-            this.numericUpDown_QuinellaMaxPurchaseCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 113);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 12);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "購入件数(歪み降順)";
-            // 
-            // groupBox_PurchaseTarget
-            // 
-            this.groupBox_PurchaseTarget.Controls.Add(this.checkBox_PurchaseCentral);
-            this.groupBox_PurchaseTarget.Controls.Add(this.checkBox_PurchaseRegional);
-            this.groupBox_PurchaseTarget.Location = new System.Drawing.Point(522, 21);
-            this.groupBox_PurchaseTarget.Name = "groupBox_PurchaseTarget";
-            this.groupBox_PurchaseTarget.Size = new System.Drawing.Size(200, 48);
-            this.groupBox_PurchaseTarget.TabIndex = 13;
-            this.groupBox_PurchaseTarget.TabStop = false;
-            this.groupBox_PurchaseTarget.Text = "購入対象";
-            // 
-            // checkBox_PurchaseCentral
-            // 
-            this.checkBox_PurchaseCentral.AutoSize = true;
-            this.checkBox_PurchaseCentral.Checked = true;
-            this.checkBox_PurchaseCentral.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_PurchaseCentral.Location = new System.Drawing.Point(16, 18);
-            this.checkBox_PurchaseCentral.Name = "checkBox_PurchaseCentral";
-            this.checkBox_PurchaseCentral.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_PurchaseCentral.TabIndex = 11;
-            this.checkBox_PurchaseCentral.Text = "中央競馬";
-            this.checkBox_PurchaseCentral.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_PurchaseRegional
-            // 
-            this.checkBox_PurchaseRegional.AutoSize = true;
-            this.checkBox_PurchaseRegional.Location = new System.Drawing.Point(105, 18);
-            this.checkBox_PurchaseRegional.Name = "checkBox_PurchaseRegional";
-            this.checkBox_PurchaseRegional.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_PurchaseRegional.TabIndex = 12;
-            this.checkBox_PurchaseRegional.Text = "地方競馬";
-            this.checkBox_PurchaseRegional.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.radioButton_QuinellaNoBetTactics);
-            this.groupBox2.Controls.Add(this.radioButton_QuinellaUseCocomo);
-            this.groupBox2.Controls.Add(this.groupBox3);
-            this.groupBox2.Location = new System.Drawing.Point(278, 18);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(238, 166);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "ベット戦略";
-            // 
-            // radioButton_QuinellaNoBetTactics
-            // 
-            this.radioButton_QuinellaNoBetTactics.AutoSize = true;
-            this.radioButton_QuinellaNoBetTactics.Location = new System.Drawing.Point(6, 115);
-            this.radioButton_QuinellaNoBetTactics.Name = "radioButton_QuinellaNoBetTactics";
-            this.radioButton_QuinellaNoBetTactics.Size = new System.Drawing.Size(73, 16);
-            this.radioButton_QuinellaNoBetTactics.TabIndex = 18;
-            this.radioButton_QuinellaNoBetTactics.TabStop = true;
-            this.radioButton_QuinellaNoBetTactics.Text = "何もしない";
-            this.radioButton_QuinellaNoBetTactics.UseVisualStyleBackColor = true;
-            // 
-            // radioButton_QuinellaUseCocomo
-            // 
-            this.radioButton_QuinellaUseCocomo.AutoSize = true;
-            this.radioButton_QuinellaUseCocomo.Location = new System.Drawing.Point(6, 21);
-            this.radioButton_QuinellaUseCocomo.Name = "radioButton_QuinellaUseCocomo";
-            this.radioButton_QuinellaUseCocomo.Size = new System.Drawing.Size(60, 16);
-            this.radioButton_QuinellaUseCocomo.TabIndex = 16;
-            this.radioButton_QuinellaUseCocomo.TabStop = true;
-            this.radioButton_QuinellaUseCocomo.Text = "ココモ法";
-            this.radioButton_QuinellaUseCocomo.UseVisualStyleBackColor = true;
-            this.radioButton_QuinellaUseCocomo.CheckedChanged += new System.EventHandler(this.RadioButton_QuinellaUseCocomo_CheckedChanged);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.numericUpDown_QuinellaCocomoMaxMagnification);
-            this.groupBox3.Controls.Add(this.numericUpDown_QuinellaCocomoThreshold);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Location = new System.Drawing.Point(32, 43);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 68);
-            this.groupBox3.TabIndex = 15;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "ココモ法詳細設定";
-            // 
-            // numericUpDown_QuinellaCocomoMaxMagnification
-            // 
-            this.numericUpDown_QuinellaCocomoMaxMagnification.Location = new System.Drawing.Point(6, 43);
-            this.numericUpDown_QuinellaCocomoMaxMagnification.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaCocomoMaxMagnification.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaCocomoMaxMagnification.Name = "numericUpDown_QuinellaCocomoMaxMagnification";
-            this.numericUpDown_QuinellaCocomoMaxMagnification.Size = new System.Drawing.Size(65, 19);
-            this.numericUpDown_QuinellaCocomoMaxMagnification.TabIndex = 14;
-            this.numericUpDown_QuinellaCocomoMaxMagnification.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // numericUpDown_QuinellaCocomoThreshold
-            // 
-            this.numericUpDown_QuinellaCocomoThreshold.Location = new System.Drawing.Point(6, 18);
-            this.numericUpDown_QuinellaCocomoThreshold.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaCocomoThreshold.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaCocomoThreshold.Name = "numericUpDown_QuinellaCocomoThreshold";
-            this.numericUpDown_QuinellaCocomoThreshold.Size = new System.Drawing.Size(65, 19);
-            this.numericUpDown_QuinellaCocomoThreshold.TabIndex = 12;
-            this.numericUpDown_QuinellaCocomoThreshold.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(77, 47);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(111, 12);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "倍のベット額になるまで";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(77, 20);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(74, 12);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "連敗するごとに";
-            // 
-            // numericUpDown_QuinnelaMinimumPayBack
-            // 
-            this.numericUpDown_QuinnelaMinimumPayBack.Increment = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinnelaMinimumPayBack.Location = new System.Drawing.Point(138, 137);
-            this.numericUpDown_QuinnelaMinimumPayBack.Maximum = new decimal(new int[] {
-            20000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinnelaMinimumPayBack.Name = "numericUpDown_QuinnelaMinimumPayBack";
-            this.numericUpDown_QuinnelaMinimumPayBack.Size = new System.Drawing.Size(101, 19);
-            this.numericUpDown_QuinnelaMinimumPayBack.TabIndex = 8;
-            // 
-            // numericUpDown_QuinellaMaximumOdds
-            // 
-            this.numericUpDown_QuinellaMaximumOdds.DecimalPlaces = 1;
-            this.numericUpDown_QuinellaMaximumOdds.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.numericUpDown_QuinellaMaximumOdds.Location = new System.Drawing.Point(138, 81);
-            this.numericUpDown_QuinellaMaximumOdds.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaMaximumOdds.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaMaximumOdds.Name = "numericUpDown_QuinellaMaximumOdds";
-            this.numericUpDown_QuinellaMaximumOdds.Size = new System.Drawing.Size(101, 19);
-            this.numericUpDown_QuinellaMaximumOdds.TabIndex = 7;
-            this.numericUpDown_QuinellaMaximumOdds.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // numericUpDown_QuinellaMinimumOdds
-            // 
-            this.numericUpDown_QuinellaMinimumOdds.DecimalPlaces = 1;
-            this.numericUpDown_QuinellaMinimumOdds.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.numericUpDown_QuinellaMinimumOdds.Location = new System.Drawing.Point(138, 50);
-            this.numericUpDown_QuinellaMinimumOdds.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaMinimumOdds.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaMinimumOdds.Name = "numericUpDown_QuinellaMinimumOdds";
-            this.numericUpDown_QuinellaMinimumOdds.Size = new System.Drawing.Size(101, 19);
-            this.numericUpDown_QuinellaMinimumOdds.TabIndex = 6;
-            this.numericUpDown_QuinellaMinimumOdds.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // numericUpDown_QuinellaOddsRatio
-            // 
-            this.numericUpDown_QuinellaOddsRatio.DecimalPlaces = 1;
-            this.numericUpDown_QuinellaOddsRatio.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.numericUpDown_QuinellaOddsRatio.Location = new System.Drawing.Point(138, 23);
-            this.numericUpDown_QuinellaOddsRatio.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaOddsRatio.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_QuinellaOddsRatio.Name = "numericUpDown_QuinellaOddsRatio";
-            this.numericUpDown_QuinellaOddsRatio.Size = new System.Drawing.Size(101, 19);
-            this.numericUpDown_QuinellaOddsRatio.TabIndex = 5;
-            this.numericUpDown_QuinellaOddsRatio.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 160);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(229, 12);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "（各々がこの金額以上になるようにベット額調整)";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 137);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(96, 12);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "最低払い戻し金額";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 81);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(103, 12);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "購入最高理論オッズ";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 52);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(103, 12);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "購入最低理論オッズ";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 25);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 12);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "最低オッズ比";
-            // 
             // button_SavePurchaseSetting
             // 
-            this.button_SavePurchaseSetting.Location = new System.Drawing.Point(12, 258);
+            this.button_SavePurchaseSetting.Location = new System.Drawing.Point(8, 459);
             this.button_SavePurchaseSetting.Name = "button_SavePurchaseSetting";
             this.button_SavePurchaseSetting.Size = new System.Drawing.Size(102, 23);
             this.button_SavePurchaseSetting.TabIndex = 7;
@@ -465,7 +94,7 @@
             // 
             // button_ResetPurchaseSetting
             // 
-            this.button_ResetPurchaseSetting.Location = new System.Drawing.Point(120, 258);
+            this.button_ResetPurchaseSetting.Location = new System.Drawing.Point(120, 459);
             this.button_ResetPurchaseSetting.Name = "button_ResetPurchaseSetting";
             this.button_ResetPurchaseSetting.Size = new System.Drawing.Size(114, 23);
             this.button_ResetPurchaseSetting.TabIndex = 8;
@@ -473,35 +102,71 @@
             this.button_ResetPurchaseSetting.UseVisualStyleBackColor = true;
             this.button_ResetPurchaseSetting.Click += new System.EventHandler(this.Button_ResetPurchaseSetting_Click);
             // 
+            // button_ExecSimulation
+            // 
+            this.button_ExecSimulation.Location = new System.Drawing.Point(289, 459);
+            this.button_ExecSimulation.Name = "button_ExecSimulation";
+            this.button_ExecSimulation.Size = new System.Drawing.Size(96, 23);
+            this.button_ExecSimulation.TabIndex = 11;
+            this.button_ExecSimulation.Text = "シミュレーション";
+            this.button_ExecSimulation.UseVisualStyleBackColor = true;
+            this.button_ExecSimulation.Click += new System.EventHandler(this.Button_ExecSimulation_Click);
+            // 
+            // oddsConfigForTicketTypeUserControl_Quinella
+            // 
+            this.oddsConfigForTicketTypeUserControl_Quinella.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.oddsConfigForTicketTypeUserControl_Quinella.DisplayName = "馬連設定";
+            this.oddsConfigForTicketTypeUserControl_Quinella.Location = new System.Drawing.Point(8, 37);
+            this.oddsConfigForTicketTypeUserControl_Quinella.Name = "oddsConfigForTicketTypeUserControl_Quinella";
+            this.oddsConfigForTicketTypeUserControl_Quinella.Size = new System.Drawing.Size(760, 205);
+            this.oddsConfigForTicketTypeUserControl_Quinella.TabIndex = 10;
+            // 
+            // oddsConfigForTicketTypeUserControl_Wide
+            // 
+            this.oddsConfigForTicketTypeUserControl_Wide.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.oddsConfigForTicketTypeUserControl_Wide.DisplayName = "ワイド設定";
+            this.oddsConfigForTicketTypeUserControl_Wide.Location = new System.Drawing.Point(8, 248);
+            this.oddsConfigForTicketTypeUserControl_Wide.Name = "oddsConfigForTicketTypeUserControl_Wide";
+            this.oddsConfigForTicketTypeUserControl_Wide.Size = new System.Drawing.Size(760, 205);
+            this.oddsConfigForTicketTypeUserControl_Wide.TabIndex = 9;
+            // 
+            // userControl_Wide
+            // 
+            this.userControl_Wide.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.userControl_Wide.DisplayName = "ワイド設定";
+            this.userControl_Wide.Location = new System.Drawing.Point(8, 248);
+            this.userControl_Wide.Name = "userControl_Wide";
+            this.userControl_Wide.Size = new System.Drawing.Size(780, 191);
+            this.userControl_Wide.TabIndex = 9;
+            // 
+            // button_StopSimulation
+            // 
+            this.button_StopSimulation.Location = new System.Drawing.Point(391, 458);
+            this.button_StopSimulation.Name = "button_StopSimulation";
+            this.button_StopSimulation.Size = new System.Drawing.Size(119, 23);
+            this.button_StopSimulation.TabIndex = 12;
+            this.button_StopSimulation.Text = "シミュレーション中止";
+            this.button_StopSimulation.UseVisualStyleBackColor = true;
+            this.button_StopSimulation.Click += new System.EventHandler(this.Button_StopSimulation_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(799, 289);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(790, 493);
+            this.Controls.Add(this.button_StopSimulation);
+            this.Controls.Add(this.button_ExecSimulation);
+            this.Controls.Add(this.oddsConfigForTicketTypeUserControl_Quinella);
+            this.Controls.Add(this.oddsConfigForTicketTypeUserControl_Wide);
             this.Controls.Add(this.button_ResetPurchaseSetting);
             this.Controls.Add(this.button_SavePurchaseSetting);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label_Running);
             this.Controls.Add(this.button_AutoPurchase_Cancel);
             this.Controls.Add(this.button_LoginConfig);
             this.Controls.Add(this.button_AutoPurchase);
             this.Name = "Form1";
             this.Text = "競馬自動購入（α）";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMaxPurchaseCount)).EndInit();
-            this.groupBox_PurchaseTarget.ResumeLayout(false);
-            this.groupBox_PurchaseTarget.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoMaxMagnification)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaCocomoThreshold)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinnelaMinimumPayBack)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMaximumOdds)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaMinimumOdds)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_QuinellaOddsRatio)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -513,31 +178,13 @@
         private System.Windows.Forms.Button button_LoginConfig;
         private System.Windows.Forms.Button button_AutoPurchase_Cancel;
         private System.Windows.Forms.Label label_Running;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinnelaMinimumPayBack;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinellaMaximumOdds;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinellaMinimumOdds;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinellaOddsRatio;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinellaCocomoMaxMagnification;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinellaCocomoThreshold;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button_SavePurchaseSetting;
         private System.Windows.Forms.Button button_ResetPurchaseSetting;
-        private System.Windows.Forms.GroupBox groupBox_PurchaseTarget;
-        private System.Windows.Forms.CheckBox checkBox_PurchaseCentral;
-        private System.Windows.Forms.CheckBox checkBox_PurchaseRegional;
-        private System.Windows.Forms.NumericUpDown numericUpDown_QuinellaMaxPurchaseCount;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.RadioButton radioButton_QuinellaNoBetTactics;
-        private System.Windows.Forms.RadioButton radioButton_QuinellaUseCocomo;
+        private OddsConfigForTicketTypeUserControl userControl_Wide;
+        private OddsConfigForTicketTypeUserControl oddsConfigForTicketTypeUserControl_Wide;
+        private OddsConfigForTicketTypeUserControl oddsConfigForTicketTypeUserControl_Quinella;
+        private System.Windows.Forms.Button button_ExecSimulation;
+        private System.Windows.Forms.Button button_StopSimulation;
     }
 }
 

@@ -25,6 +25,19 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         [DataMember]
         public BetResultStatusOfTicketType WideBetStatus { get; set; } = new BetResultStatusOfTicketType();
+
+
+        public BetResultStatusOfTicketType GetTicketTypeStatus(TicketType ticketType)
+        {
+            switch (ticketType)
+            {
+                default:
+                case TicketType.Quinella:
+                    return QuinellaBetStatus;
+                case TicketType.Wide:
+                    return WideBetStatus;
+            }
+        }
     }
 
     [DataContract]

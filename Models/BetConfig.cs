@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -8,11 +9,29 @@ namespace HorseRacingAutoPurchaser
     [DataContract]
     public class BetConfig
     {
+
+        private List<BetConfigForTicketType> CurrentList => new List<BetConfigForTicketType>()
+            {
+                QuinellaBetConfig,
+                WideBetConfig
+            };
+
         [DataMember]
         public BetConfigForTicketType QuinellaBetConfig { get; set; } = new BetConfigForTicketType();
 
         [DataMember]
         public BetConfigForTicketType WideBetConfig { get; set; } = new BetConfigForTicketType();
+
+
+        public bool ContainCentral()
+        {
+            return CurrentList.Any(_ => _.PurchaseCentral);
+        }
+
+        public bool ContainRegional()
+        {
+            return CurrentList.Any(_ => _.PurchaseRegional);
+        }
     }
 
     [DataContract]
@@ -25,7 +44,7 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         [DataMember]
 
-        public double OddsRatio { get; set; } = 5;
+        public double OddsRatio { get; set; } = 1.3;
 
         /// <summary>
         /// 最低払い戻し金額。払い戻しがこの金額以上になるようにオッズ額を修正する。
@@ -37,7 +56,7 @@ namespace HorseRacingAutoPurchaser
         /// 購入しても良い最低オッズ
         /// </summary>
         [DataMember]
-        public double MinimumOdds { get; set; } = 1.3;
+        public double MinimumOdds { get; set; } = 2;
 
         /// <summary>
         /// 購入しても良い最大オッズ
@@ -80,5 +99,8 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         [DataMember]
         public int MaxPurchaseCount { get; set; } = 3;
+
+
+        public bool NeedPurchase => PurchaseCentral || PurchaseRegional;
     }
 }

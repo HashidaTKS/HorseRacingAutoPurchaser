@@ -71,145 +71,39 @@ namespace HorseRacingAutoPurchaser
             return betData;
         }
 
-        public static IEnumerable<BetDatum> SelectWinTicket(RaceDataForComparison outputRaceData)
+        public static IEnumerable<BetDatum> SelectWinTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
         {
-            var actualOdds = outputRaceData.ActualRaceData.WinOdds;
-            var theoreticalOdds = outputRaceData.TheoreticalRaceData.WinOdds;
-            var count = actualOdds.Count;
-            for (var i = 0; i < count; i++)
-            {
-                if (actualOdds[i] == null || theoreticalOdds[i] == null)
-                {
-                    continue;
-                }
+            return SelectTicketBase(raceDataForComparison, betconfig, betResultStatus, TicketType.Win);
 
-                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) >= 1.3 && theoreticalOdds[i].Odds > 5 && theoreticalOdds[i].Odds < 100)
-                {
-                    yield return new BetDatum(outputRaceData.RaceData, actualOdds[i].HorseData.Select(_ => _.Number).ToList(), 100, actualOdds[i].Odds, theoreticalOdds[i].Odds, TicketType.Win);
-                }
-                yield break;
-            }
         }
 
         public static IEnumerable<BetDatum> SelectWideTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
         {
-            var actualOdds = raceDataForComparison.ActualRaceData.QuinellaOdds;
-            var theoreticalOdds = raceDataForComparison.TheoreticalRaceData.QuinellaOdds;
-            var count = actualOdds.Count;
-            var cocomo = new Cocomo();
-            for (var i = 0; i < count; i++)
-            {
+            return SelectTicketBase(raceDataForComparison, betconfig, betResultStatus, TicketType.Wide);
 
-                if (actualOdds[i] == null || theoreticalOdds[i] == null)
-                {
-                    continue;
-                }
-                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) >= betconfig.OddsRatio &&
-                    theoreticalOdds[i].Odds >= betconfig.MinimumOdds && theoreticalOdds[i].Odds < betconfig.MaximumOdds)
-                {
-                    var betMoney = GetAdjustedBetMoney(betconfig.MinimumPayBack, actualOdds[i].Odds);
-                    if (betconfig.UseCocomo)
-                    {
-                        betMoney *= cocomo.GetMagnification(betconfig, betResultStatus);
-                    }
-
-                    yield return new BetDatum(
-                        raceDataForComparison.RaceData,
-                        actualOdds[i].HorseData.Select(_ => _.Number).ToList(),
-                        betMoney,
-                        actualOdds[i].Odds,
-                        theoreticalOdds[i].Odds,
-                        TicketType.Wide);
-                }
-            }
         }
 
         public static IEnumerable<BetDatum> SelectQuinellaTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
         {
-            var actualOdds = raceDataForComparison.ActualRaceData.QuinellaOdds;
-            var theoreticalOdds = raceDataForComparison.TheoreticalRaceData.QuinellaOdds;
-            var count = actualOdds.Count;
-            var cocomo = new Cocomo();
-            for (var i = 0; i < count; i++)
-            {
-
-                if (actualOdds[i] == null || theoreticalOdds[i] == null)
-                {
-                    continue;
-                }
-                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) >= betconfig.OddsRatio &&
-                    theoreticalOdds[i].Odds >= betconfig.MinimumOdds && theoreticalOdds[i].Odds < betconfig.MaximumOdds)
-                {
-                    var betMoney = GetAdjustedBetMoney(betconfig.MinimumPayBack, actualOdds[i].Odds);
-                    if (betconfig.UseCocomo)
-                    {
-                        betMoney *= cocomo.GetMagnification(betconfig, betResultStatus);
-                    }
-
-                    yield return new BetDatum(
-                        raceDataForComparison.RaceData,
-                        actualOdds[i].HorseData.Select(_ => _.Number).ToList(),
-                        betMoney,
-                        actualOdds[i].Odds,
-                        theoreticalOdds[i].Odds,
-                        TicketType.Quinella);
-                }
-            }
+            return SelectTicketBase(raceDataForComparison, betconfig, betResultStatus, TicketType.Quinella);
         }
 
-        public static IEnumerable<BetDatum> SelectExactaTicket(RaceDataForComparison outputRaceData)
+        public static IEnumerable<BetDatum> SelectExactaTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
         {
-            var actualOdds = outputRaceData.ActualRaceData.ExactaOdds;
-            var theoreticalOdds = outputRaceData.TheoreticalRaceData.ExactaOdds;
-            var count = actualOdds.Count;
-            for (var i = 0; i < count; i++)
-            {
-                if (actualOdds[i] == null || theoreticalOdds[i] == null)
-                {
-                    continue;
-                }
-                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) >= 1.3 && actualOdds[i].Odds > 30)
-                {
-                    yield return new BetDatum(outputRaceData.RaceData, actualOdds[i].HorseData.Select(_ => _.Number).ToList(), GetAdjustedBetMoney(50000, theoreticalOdds[i].Odds), actualOdds[i].Odds, theoreticalOdds[i].Odds, TicketType.Exacta);
-                }
-            }
+            return SelectTicketBase(raceDataForComparison, betconfig, betResultStatus, TicketType.Exacta);
+
         }
 
-        public static IEnumerable<BetDatum> SelectTrifectaTicket(RaceDataForComparison outputRaceData)
+        public static IEnumerable<BetDatum> SelectTrifectaTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
         {
-            var actualOdds = outputRaceData.ActualRaceData.TrifectaOdds;
-            var theoreticalOdds = outputRaceData.TheoreticalRaceData.TrifectaOdds;
-            var count = actualOdds.Count;
-            for (var i = 0; i < count; i++)
-            {
-                if (actualOdds[i] == null || theoreticalOdds[i] == null)
-                {
-                    continue;
-                }
+            return SelectTicketBase(raceDataForComparison, betconfig, betResultStatus, TicketType.Trifecta);
 
-                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) >= 2.5 && actualOdds[i].Odds > 50)
-                {
-                    yield return new BetDatum(outputRaceData.RaceData, actualOdds[i].HorseData.Select(_ => _.Number).ToList(), 100, actualOdds[i].Odds, theoreticalOdds[i].Odds, TicketType.Trifecta);
-                }
-            }
         }
 
-        public static IEnumerable<BetDatum> SelectTrioTicket(RaceDataForComparison outputRaceData)
+        public static IEnumerable<BetDatum> SelectTrioTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
         {
-            var actualOdds = outputRaceData.ActualRaceData.TrioOdds;
-            var theoreticalOdds = outputRaceData.TheoreticalRaceData.TrioOdds;
-            var count = actualOdds.Count;
-            for (var i = 0; i < count; i++)
-            {
-                if (actualOdds[i] == null || theoreticalOdds[i] == null)
-                {
-                    continue;
-                }
-                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) > 2.5 && actualOdds[i].Odds > 50)
-                {
-                    yield return new BetDatum(outputRaceData.RaceData, actualOdds[i].HorseData.Select(_ => _.Number).ToList(), 100, actualOdds[i].Odds, theoreticalOdds[i].Odds, TicketType.Trio);
-                }
-            }
+            return SelectTicketBase(raceDataForComparison, betconfig, betResultStatus, TicketType.Trio);
+
         }
 
         private static double GetOddsRatio(double actual, double theoretical)
@@ -234,6 +128,39 @@ namespace HorseRacingAutoPurchaser
             }
             var ratio = targetMoney / (odds * 100);
             return (int)(ratio + 1) * 100;
+        }
+
+        private static IEnumerable<BetDatum> SelectTicketBase(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betConfigForTicketType, BetResultStatusOfTicketType betResultStatusOfTicketType, TicketType ticketType)
+        {
+            var actualOdds = raceDataForComparison.ActualRaceData.GetOddsOfTicketType(ticketType);
+            var theoreticalOdds = raceDataForComparison.TheoreticalRaceData.GetOddsOfTicketType(ticketType);
+            var count = actualOdds.Count;
+            var cocomo = new Cocomo();
+            for (var i = 0; i < count; i++)
+            {
+
+                if (actualOdds[i] == null || theoreticalOdds[i] == null)
+                {
+                    continue;
+                }
+                if (GetOddsRatio(actualOdds[i].Odds, theoreticalOdds[i].Odds) >= betConfigForTicketType.OddsRatio &&
+                    theoreticalOdds[i].Odds >= betConfigForTicketType.MinimumOdds && theoreticalOdds[i].Odds < betConfigForTicketType.MaximumOdds)
+                {
+                    var betMoney = GetAdjustedBetMoney(betConfigForTicketType.MinimumPayBack, actualOdds[i].Odds);
+                    if (betConfigForTicketType.UseCocomo)
+                    {
+                        betMoney *= cocomo.GetMagnification(betConfigForTicketType, betResultStatusOfTicketType);
+                    }
+
+                    yield return new BetDatum(
+                        raceDataForComparison.RaceData,
+                        actualOdds[i].HorseData.Select(_ => _.Number).ToList(),
+                        betMoney,
+                        actualOdds[i].Odds,
+                        theoreticalOdds[i].Odds,
+                        ticketType);
+                }
+            }
         }
     }
 }
