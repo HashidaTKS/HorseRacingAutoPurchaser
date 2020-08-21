@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 namespace HorseRacingAutoPurchaser
@@ -38,11 +39,29 @@ namespace HorseRacingAutoPurchaser
 
                     if (File.Exists(this.FilePath))
                     {
-                        File.Replace(tmpFilePath, this.FilePath, null);
+                        try
+                        {
+                            File.Replace(tmpFilePath, this.FilePath, null);
+                        }
+                        catch
+                        {
+                            //1回だけリトライする
+                            Thread.Sleep(100);
+                            File.Replace(tmpFilePath, this.FilePath, null);
+                        }
                     }
                     else
                     {
-                        File.Move(tmpFilePath, this.FilePath);
+                        try
+                        {
+                            File.Move(tmpFilePath, this.FilePath);
+                        }
+                        catch
+                        {
+                            //1回だけリトライする
+                            Thread.Sleep(100);
+                            File.Move(tmpFilePath, this.FilePath);
+                        }
                     }
 
                 }

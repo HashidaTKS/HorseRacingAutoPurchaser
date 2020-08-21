@@ -78,20 +78,29 @@ namespace HorseRacingAutoPurchaser
                 }
             }
 
-            var raceDataForComparisonManager = RaceDataForComparisonManager.Get(from, to).ToList();
-            var outputRaceDataList = new List<RaceDataForComparison>();
+            var raceDataForComparisonManager = RaceDataForComparisonManager.Get(from, to);
+            IEnumerable<RaceDataForComparison> outputRaceDataList;
+            var totalResult = new List<DailyResultOfBet>();
 
-            if (betConfig.ContainCentral())
+
+            if (betConfig.ContainCentral() && betConfig.ContainRegional())
             {
-                outputRaceDataList.AddRange(raceDataForComparisonManager.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central));
+                outputRaceDataList = raceDataForComparisonManager;
             }
-            if (betConfig.ContainRegional())
+            else if (betConfig.ContainCentral())
             {
-                outputRaceDataList.AddRange(raceDataForComparisonManager.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Regional));
+                outputRaceDataList = raceDataForComparisonManager.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Central);
+            }
+            else if (betConfig.ContainRegional())
+            {
+                outputRaceDataList = raceDataForComparisonManager.Where(_ => _.RaceData.HoldingDatum.Region.RagionType == RegionType.Regional);
+            }
+            else
+            {
+                return new TotalResultOfBet(totalResult);
             }
 
             var groupedOutputRaceDataList = outputRaceDataList.GroupBy(_ => _.RaceData.HoldingDatum.HeldDate);
-            var totalResult = new List<DailyResultOfBet>();
             var betResultStatus = new BetResultStatus();
             foreach (var oneDayOutputRaceDataList in groupedOutputRaceDataList)
             {
@@ -132,6 +141,7 @@ namespace HorseRacingAutoPurchaser
 
     public class TotalResultOfBet
     {
+        //全部メモリ持ちするのやめたいが。。。
         public List<DailyResultOfBet> ResultOfDayList { get; set; }
 
         public double TotalBetMoney => ResultOfDayList.Sum(_ => _.TotalBetMoney);
@@ -150,7 +160,7 @@ namespace HorseRacingAutoPurchaser
 
         public static string GetCsvHeader()
         {
-            return "開催日,開催地,レース番号,券種,馬,ベット額,払い戻し,利益,総ベット額,総払い戻し額,総利益,開始からの還元率,開始からの的中率";
+            return "開催日,開催地,レース番号,券種,馬,実オッズ,理論オッズ,ベット額,払い戻し,利益,総ベット額,総払い戻し額,総利益,開始からの還元率,開始からの的中率";
         }
 
         private void OutputCsvToStream(StreamWriter streamWriter)
@@ -180,6 +190,8 @@ namespace HorseRacingAutoPurchaser
                     $"{result.BetDatum.RaceData.RaceNumber}," +
                     $"{result.BetDatum.TicketType.ToString()}," +
                     $"{string.Join(" - ", result.BetDatum.HorseNumList)}," +
+                    $"{result.BetDatum.ActualOdds}," +
+                    $"{result.BetDatum.TheoreticalOdds}," +
                     $"{result.BetMoney}," +
                     $"{result.PayBack}," +
                     $"{result.Profit}," +
@@ -196,6 +208,8 @@ namespace HorseRacingAutoPurchaser
 
         public void OutputCsvToFile(string path)
         {
+            var dirName = Path.GetDirectoryName(path);
+            Directory.CreateDirectory(dirName);
             using (var stream = new FileStream(path, FileMode.OpenOrCreate))
             using (var streamWriter = new StreamWriter(stream))
             {

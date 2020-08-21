@@ -27,7 +27,8 @@ namespace HorseRacingAutoPurchaser
         [DataMember]
         public List<OddsDatum> TrioOdds { get; set; }
 
-        //実オッズの場合、最もオッズを表す
+        //実オッズの場合、最も低いオッズを表す
+        //理論オッズの場合、的中確率を表す
         [DataMember]
         public List<OddsDatum> WideOdds { get; set; }
 

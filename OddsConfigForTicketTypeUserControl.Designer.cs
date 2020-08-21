@@ -29,7 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown_MaxPurchaseCount = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_MaxPurchaseCountOrderByProbability = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.numericUpDown_MaxPurchaseCountOrderByRatio = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox_PurchaseTarget = new System.Windows.Forms.GroupBox();
             this.checkBox_PurchaseCentral = new System.Windows.Forms.CheckBox();
@@ -52,7 +54,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_MaxPurchaseCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_MaxPurchaseCountOrderByProbability)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_MaxPurchaseCountOrderByRatio)).BeginInit();
             this.groupBox_PurchaseTarget.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -67,7 +70,9 @@
             // groupBox1
             // 
             this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox1.Controls.Add(this.numericUpDown_MaxPurchaseCount);
+            this.groupBox1.Controls.Add(this.numericUpDown_MaxPurchaseCountOrderByProbability);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.numericUpDown_MaxPurchaseCountOrderByRatio);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.groupBox_PurchaseTarget);
             this.groupBox1.Controls.Add(this.groupBox2);
@@ -88,32 +93,43 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "設定名";
             // 
-            // numericUpDown_MaxPurchaseCount
+            // numericUpDown_MaxPurchaseCountOrderByProbability
             // 
-            this.numericUpDown_MaxPurchaseCount.Location = new System.Drawing.Point(138, 111);
-            this.numericUpDown_MaxPurchaseCount.Maximum = new decimal(new int[] {
+            this.numericUpDown_MaxPurchaseCountOrderByProbability.Location = new System.Drawing.Point(161, 115);
+            this.numericUpDown_MaxPurchaseCountOrderByProbability.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
-            this.numericUpDown_MaxPurchaseCount.Minimum = new decimal(new int[] {
-            1,
+            this.numericUpDown_MaxPurchaseCountOrderByProbability.Name = "numericUpDown_MaxPurchaseCountOrderByProbability";
+            this.numericUpDown_MaxPurchaseCountOrderByProbability.Size = new System.Drawing.Size(78, 19);
+            this.numericUpDown_MaxPurchaseCountOrderByProbability.TabIndex = 17;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 117);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(145, 12);
+            this.label9.TabIndex = 16;
+            this.label9.Text = "購入件数(理論的中率降順)";
+            // 
+            // numericUpDown_MaxPurchaseCountOrderByRatio
+            // 
+            this.numericUpDown_MaxPurchaseCountOrderByRatio.Location = new System.Drawing.Point(161, 92);
+            this.numericUpDown_MaxPurchaseCountOrderByRatio.Maximum = new decimal(new int[] {
+            1000000,
             0,
             0,
             0});
-            this.numericUpDown_MaxPurchaseCount.Name = "numericUpDown_MaxPurchaseCount";
-            this.numericUpDown_MaxPurchaseCount.Size = new System.Drawing.Size(101, 19);
-            this.numericUpDown_MaxPurchaseCount.TabIndex = 15;
-            this.numericUpDown_MaxPurchaseCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.numericUpDown_MaxPurchaseCountOrderByRatio.Name = "numericUpDown_MaxPurchaseCountOrderByRatio";
+            this.numericUpDown_MaxPurchaseCountOrderByRatio.Size = new System.Drawing.Size(78, 19);
+            this.numericUpDown_MaxPurchaseCountOrderByRatio.TabIndex = 15;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 113);
+            this.label1.Location = new System.Drawing.Point(6, 94);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(108, 12);
             this.label1.TabIndex = 14;
@@ -269,7 +285,7 @@
             0,
             0,
             0});
-            this.numericUpDown_MinimumPayBack.Location = new System.Drawing.Point(138, 137);
+            this.numericUpDown_MinimumPayBack.Location = new System.Drawing.Point(138, 140);
             this.numericUpDown_MinimumPayBack.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -287,7 +303,7 @@
             0,
             0,
             65536});
-            this.numericUpDown_MaximumOdds.Location = new System.Drawing.Point(138, 81);
+            this.numericUpDown_MaximumOdds.Location = new System.Drawing.Point(138, 67);
             this.numericUpDown_MaximumOdds.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -315,7 +331,7 @@
             0,
             0,
             65536});
-            this.numericUpDown_MinimumOdds.Location = new System.Drawing.Point(138, 50);
+            this.numericUpDown_MinimumOdds.Location = new System.Drawing.Point(138, 45);
             this.numericUpDown_MinimumOdds.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -349,11 +365,6 @@
             0,
             0,
             0});
-            this.numericUpDown_OddsRatio.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.numericUpDown_OddsRatio.Name = "numericUpDown_OddsRatio";
             this.numericUpDown_OddsRatio.Size = new System.Drawing.Size(101, 19);
             this.numericUpDown_OddsRatio.TabIndex = 5;
@@ -366,7 +377,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 160);
+            this.label6.Location = new System.Drawing.Point(10, 162);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(229, 12);
             this.label6.TabIndex = 4;
@@ -375,7 +386,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 137);
+            this.label5.Location = new System.Drawing.Point(6, 142);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 12);
             this.label5.TabIndex = 3;
@@ -384,7 +395,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 81);
+            this.label4.Location = new System.Drawing.Point(6, 69);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(103, 12);
             this.label4.TabIndex = 2;
@@ -393,7 +404,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 52);
+            this.label3.Location = new System.Drawing.Point(6, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 12);
             this.label3.TabIndex = 1;
@@ -404,21 +415,22 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(6, 25);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 12);
+            this.label2.Size = new System.Drawing.Size(117, 12);
             this.label2.TabIndex = 0;
-            this.label2.Text = "最低オッズ比";
+            this.label2.Text = "最低オッズ比(実/理論)";
             // 
-            // UserControl1
+            // OddsConfigForTicketTypeUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(this.groupBox1);
-            this.Name = "UserControl1";
+            this.Name = "OddsConfigForTicketTypeUserControl";
             this.Size = new System.Drawing.Size(760, 205);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_MaxPurchaseCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_MaxPurchaseCountOrderByProbability)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_MaxPurchaseCountOrderByRatio)).EndInit();
             this.groupBox_PurchaseTarget.ResumeLayout(false);
             this.groupBox_PurchaseTarget.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -438,7 +450,7 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDown_MaxPurchaseCount;
+        private System.Windows.Forms.NumericUpDown numericUpDown_MaxPurchaseCountOrderByRatio;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox_PurchaseTarget;
         private System.Windows.Forms.CheckBox checkBox_PurchaseCentral;
@@ -460,5 +472,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown numericUpDown_MaxPurchaseCountOrderByProbability;
+        private System.Windows.Forms.Label label9;
     }
 }

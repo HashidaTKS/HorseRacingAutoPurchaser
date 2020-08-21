@@ -24,6 +24,7 @@ namespace HorseRacingAutoPurchaser
             var filterdTheoreticalRaceData = new TheoreticalRaceAndOddsData(theoreticalRaceData.BaseRaceData);
             filterdTheoreticalRaceData.WinOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.WinOdds, theoreticalRaceData.WinOdds, TicketType.Win).ToList();
             filterdTheoreticalRaceData.QuinellaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.QuinellaOdds, theoreticalRaceData.QuinellaOdds, TicketType.Quinella).ToList();
+            filterdTheoreticalRaceData.WideOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.WideOdds, theoreticalRaceData.WideOdds, TicketType.Wide).ToList();
             //馬連までで十分なので、その他は計算しない
             //filterdTheoreticalRaceData.ExactaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.ExactaOdds, theoreticalRaceData.ExactaOdds, TicketType.Exacta).ToList();
             //filterdTheoreticalRaceData.TrifectaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.TrifectaOdds, theoreticalRaceData.TrifectaOdds, TicketType.Trifecta).ToList();

@@ -23,7 +23,6 @@ namespace HorseRacingAutoPurchaser
 
         public double OddsRatio => TheoreticalOdds > 0 ? ActualOdds / TheoreticalOdds : Int32.MaxValue;
         
-
         public BetDatum(RaceData raceData, List<int> horseNumList, int betYen, double actualOdds, double theoreticalOdds, TicketType ticketType)
         {
             RaceData = raceData;

@@ -95,10 +95,16 @@ namespace HorseRacingAutoPurchaser
         public bool PurchaseRegional { get; set; } = false;
 
         /// <summary>
-        /// 一度に購入できる最大チケット数
+        /// 一度に購入できる最大チケット数（歪み降順）
         /// </summary>
         [DataMember]
-        public int MaxPurchaseCount { get; set; } = 3;
+        public int MaxPurchaseCountOrderByRatio { get; set; } = 1;
+
+        /// <summary>
+        /// 一度に購入できる最大チケット数（確率が高い順）
+        /// </summary>
+        [DataMember]
+        public int MaxPurchaseCountOrderByProbability { get; set; } = 1;
 
 
         public bool NeedPurchase => PurchaseCentral || PurchaseRegional;

@@ -40,8 +40,24 @@ namespace HorseRacingAutoPurchaser
         /// <returns></returns>
         private bool AlertIfNeed()
         {
-            return oddsConfigForTicketTypeUserControl_Quinella.NeedAlert() ||
-                oddsConfigForTicketTypeUserControl_Wide.NeedAlert();
+            if (oddsConfigForTicketTypeUserControl_Quinella.NeedAlert() ||
+                oddsConfigForTicketTypeUserControl_Wide.NeedAlert())
+            {
+                var result = MessageBox.Show("ベット額が大きくなる可能性があります。構いませんか？",
+                    "警告",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Exclamation);
+
+                if (result == DialogResult.Yes)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
 
@@ -53,8 +69,7 @@ namespace HorseRacingAutoPurchaser
 
         private void Button_AutoPurchase_Click(object sender, EventArgs e)
         {
-
-            if (!AutoPurchaserMainTask.Running)
+            if (!SimulatorMainTask.Running && !AutoPurchaserMainTask.Running)
             {
                 var isIntendedSetting = AlertIfNeed();
                 if (isIntendedSetting)
@@ -107,30 +122,70 @@ namespace HorseRacingAutoPurchaser
 
         private void Button_ExecSimulation_Click(object sender, EventArgs e)
         {
-            if (!SimulatorMainTask.Running)
+
+            if (!SimulatorMainTask.Running && !AutoPurchaserMainTask.Running)
             {
-                var isIntendedSetting = AlertIfNeed();
-                if (isIntendedSetting)
-                {
-                    StoreCurrentConfig();
-                    SimulatorMainTask.Run();
-                    label_Running.Visible = true;
-                }
+                StoreCurrentConfig();
+                var from = dateTimePicker_SimulateFrom.Value;
+                var to = dateTimePicker_SimulateTo.Value;
+                var useOnlySavedData = checkBox_SimulateBySavedData.Checked;
+
+                SimulatorMainTask.Run(from, to, useOnlySavedData);
+                label_RunningSimulation.Visible = true;
+
             }
-            return;
         }
 
         private void Button_StopSimulation_Click(object sender, EventArgs e)
         {
-            if (!SimulatorMainTask.Running)
+            if (SimulatorMainTask.Running)
             {
-                var isIntendedSetting = AlertIfNeed();
-                if (isIntendedSetting)
-                {
-                    StoreCurrentConfig();
-                    SimulatorMainTask.Run();
-                    label_Running.Visible = true;
-                }
+                SimulatorMainTask.Stop();
+                label_RunningSimulation.Visible = false;
+            }
+        }
+
+        private void Label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Timer1_Tick(object sender, EventArgs e)
+        {
+            if (SimulatorMainTask.Running)
+            {
+                label_RunningSimulation.Visible = true;
+            }
+            else
+            {
+                label_RunningSimulation.Visible = false;
+            }
+
+            if (AutoPurchaserMainTask.Running)
+            {
+                label_Running.Visible = true;
+
+            }
+            else
+            {
+                label_Running.Visible = false;
+            }
+
+            if (SimulatorMainTask.Running || AutoPurchaserMainTask.Running)
+            {
+                button_LoginConfig.Enabled = false;
+                button_SavePurchaseSetting.Enabled = false;
+                button_ResetPurchaseSetting.Enabled = false;
+                button_AutoPurchase.Enabled = false;
+                button_ExecSimulation.Enabled = false;
+            }
+            else
+            {
+                button_LoginConfig.Enabled = true;
+                button_SavePurchaseSetting.Enabled = true;
+                button_ResetPurchaseSetting.Enabled = true;
+                button_AutoPurchase.Enabled = true;
+                button_ExecSimulation.Enabled = true;
             }
         }
     }

@@ -39,10 +39,16 @@ namespace HorseRacingAutoPurchaser
 
         public bool NeedAlert()
         {
+
+            if(!checkBox_PurchaseCentral.Checked && !checkBox_PurchaseRegional.Checked)
+            {
+                return false;
+            }
             return numericUpDown_MinimumPayBack.Value >= 10000 ||
                     (radioButton_UseCocomo.Checked &&
                     (numericUpDown_CocomoThreshold.Value < 50 || numericUpDown_CocomoMaxMagnification.Value > 10)) ||
-                    numericUpDown_MaxPurchaseCount.Value * numericUpDown_MinimumPayBack.Value >= 30000 ||
+                    (numericUpDown_MaxPurchaseCountOrderByRatio.Value + numericUpDown_MaxPurchaseCountOrderByRatio.Value) * numericUpDown_MinimumPayBack.Value >= 30000 ||
+                    numericUpDown_MinimumPayBack.Value >= 30000 ||
                     numericUpDown_MinimumPayBack.Value >= 10000 * numericUpDown_MinimumOdds.Value;
         }
 
@@ -52,7 +58,8 @@ namespace HorseRacingAutoPurchaser
             numericUpDown_MinimumOdds.Value = (decimal)betConfigForTicketType.MinimumOdds;
             numericUpDown_MaximumOdds.Value = (decimal)betConfigForTicketType.MaximumOdds;
             numericUpDown_MinimumPayBack.Value = (decimal)betConfigForTicketType.MinimumPayBack;
-            numericUpDown_MaxPurchaseCount.Value = betConfigForTicketType.MaxPurchaseCount;
+            numericUpDown_MaxPurchaseCountOrderByRatio.Value = betConfigForTicketType.MaxPurchaseCountOrderByRatio;
+            numericUpDown_MaxPurchaseCountOrderByProbability.Value = betConfigForTicketType.MaxPurchaseCountOrderByProbability;
             radioButton_UseCocomo.Checked = betConfigForTicketType.UseCocomo;
             radioButton_NoBetTactics.Checked = !radioButton_UseCocomo.Checked;
             numericUpDown_CocomoThreshold.Value = betConfigForTicketType.CocomoThreshold;
@@ -70,7 +77,8 @@ namespace HorseRacingAutoPurchaser
                 MinimumOdds = (double)numericUpDown_MinimumOdds.Value,
                 MaximumOdds = (double)numericUpDown_MaximumOdds.Value,
                 MinimumPayBack = (double)numericUpDown_MinimumPayBack.Value,
-                MaxPurchaseCount = (int)numericUpDown_MaxPurchaseCount.Value,
+                MaxPurchaseCountOrderByRatio = (int)numericUpDown_MaxPurchaseCountOrderByRatio.Value,
+                MaxPurchaseCountOrderByProbability = (int)numericUpDown_MaxPurchaseCountOrderByProbability.Value,
                 UseCocomo = radioButton_UseCocomo.Checked,
                 CocomoThreshold = (int)numericUpDown_CocomoThreshold.Value,
                 CocomoMaxMagnification = (int)numericUpDown_CocomoMaxMagnification.Value,

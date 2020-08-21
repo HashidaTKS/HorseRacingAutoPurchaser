@@ -1,4 +1,6 @@
 ﻿
+using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -45,17 +47,17 @@ namespace HorseRacingAutoPurchaser
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
         }
 
-        private IEnumerable<OddsDatum> GetFromWonTable(ReadOnlyCollection<IWebElement> trCollection)
+        private IEnumerable<OddsDatum> GetFromWonTable(IHtmlCollection<IElement> trCollection)
         {
-            var count = trCollection.Count;
+            var count = trCollection.Length;
             for (var i = 1; i < count; i++)
             {
-                var tdList = trCollection[i].FindElements(By.TagName("td"));
-                if (!int.TryParse(tdList[1].Text, out var horse))
+                var tdList = trCollection[i].GetElementsByTagName("td");
+                if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
                 {
                     continue;
                 }
-                if (!double.TryParse(tdList.LastOrDefault().Text, out var odds))
+                if (!double.TryParse(tdList.LastOrDefault().TextContent.Replace("\r", "").Replace("\n", ""), out var odds))
                 {
                     continue;
                 }
@@ -64,7 +66,7 @@ namespace HorseRacingAutoPurchaser
             }
         }
 
-        private IEnumerable<OddsDatum> GetFromPopularTable(ReadOnlyCollection<IWebElement> trCollection, TicketType ticketType)
+        private IEnumerable<OddsDatum> GetFromPopularTable(IHtmlCollection<IElement> trCollection, TicketType ticketType)
         {
             var rank = 1;
             if (ticketType == TicketType.Exacta || ticketType == TicketType.Quinella || ticketType == TicketType.Wide)
@@ -75,28 +77,29 @@ namespace HorseRacingAutoPurchaser
             {
                 rank = 3;
             }
-
-            var count = trCollection.Count;
-            var columnCount = trCollection[0].FindElements(By.TagName("th")).Count;
+            var count = trCollection.Length;
+            var columnCount = trCollection[0].GetElementsByTagName("th").Length;
             var startIndexOfHorseNumber = columnCount - rank;
             for (var i = 2; i < count; i++)
             {
                 var horseData = new List<HorseDatum>(rank);
-                var tdList = trCollection[i].FindElements(By.TagName("td"));
-                for (var j = 0; j < rank; j++)
+                double odds;
+                try
                 {
-                    var index = startIndexOfHorseNumber + 2 * j;
-                    if (!int.TryParse(tdList[index].Text, out var horse))
+                    var tdList = trCollection[i].GetElementsByTagName("td");
+                    for (var j = 0; j < rank; j++)
                     {
-                        continue;
-                    }
-                    //ここでは馬番号だけが欲しいので、確率その他の情報は無視
+                        var index = startIndexOfHorseNumber + 2 * j;
+                        var horse = Convert.ToInt32(tdList[index].TextContent.Replace("\r", "").Replace("\n", ""));
+                        //ここでは馬番号だけが欲しいので、確率その他の情報は無視
 
-                    horseData.Add(new HorseDatum(horse, -1, "", ""));
+                        horseData.Add(new HorseDatum(horse, -1, "", ""));
+                    }
+                    odds = Convert.ToDouble(tdList[startIndexOfHorseNumber - 1].TextContent.Trim('\n', '\r').Split(' ', '\n', '\r')[0]);
                 }
-                if (!double.TryParse(tdList[startIndexOfHorseNumber - 1].Text.Replace("\r","").Replace("\n", "").Split(' ')[0], out var odds))
+                catch (Exception ex)
                 {
-                    //パースに失敗する->出走取消、存在しない券種（ワイドなど）だった
+                    Console.WriteLine(ex);
                     continue;
                 }
                 yield return new OddsDatum(horseData, odds);
@@ -106,9 +109,11 @@ namespace HorseRacingAutoPurchaser
         public List<OddsDatum> GetOdds(RaceData raceData, TicketType ticketType)
         {
             Chrome.Url = raceData.ToRaseOddsPageUrlString(ticketType);
-            Thread.Sleep(300);
-
-            var trCollection = Chrome.FindElementsByClassName("RaceOdds_HorseList_Table").FirstOrDefault()?.FindElements(By.TagName("tr"));
+            Thread.Sleep(500);
+            //高速化のためにchromedriverではなくAngleSharpを使っている
+            var parser = new HtmlParser();
+            var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+            var trCollection = doc.GetElementsByClassName("RaceOdds_HorseList_Table").FirstOrDefault()?.GetElementsByTagName("tr");
             if (trCollection == null)
             {
                 return null;
@@ -125,12 +130,12 @@ namespace HorseRacingAutoPurchaser
 
         }
 
-        public RaceResult GetRaceResult(RaceData raceData)
+        public RaceResult GetRaceResult_Old(RaceData raceData)
         {
             try
             {
                 Chrome.Url = raceData.ToRaceResultPageUrlString();
-                Thread.Sleep(300);
+                Thread.Sleep(500);
 
                 var firstPayoutTable = Chrome.FindElementsByClassName("Payout_Detail_Table").FirstOrDefault();
                 var winHorseString = firstPayoutTable.FindElement(By.ClassName("Tansho")).FindElement(By.ClassName("Result")).Text;
@@ -173,11 +178,63 @@ namespace HorseRacingAutoPurchaser
             }
         }
 
+        public RaceResult GetRaceResult(RaceData raceData)
+        {
+            try
+            {
+                Chrome.Url = raceData.ToRaceResultPageUrlString();
+                Thread.Sleep(500);
+
+                //高速化のためにchromedriverではなくAngleSharpを使っている
+                var parser = new HtmlParser();
+                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+
+                var firstPayoutTable = doc.GetElementsByClassName("Payout_Detail_Table").FirstOrDefault();
+                var winHorseString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var winPayoutString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var quinellaHorseString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var quinellaPayoutString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+
+                var secondPayoutTable = doc.GetElementsByClassName("Payout_Detail_Table").Skip(1).FirstOrDefault();
+                var extractHorseString = secondPayoutTable.GetElementsByClassName("Umatan").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var extractPayoutString = secondPayoutTable.GetElementsByClassName("Umatan").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var trioHorseString = secondPayoutTable.GetElementsByClassName("Fuku3").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var trioPayoutString = secondPayoutTable.GetElementsByClassName("Fuku3").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var trifectaHorseString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var trifectaPayoutString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+
+                var wideHorseStringList = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().GetElementsByTagName("ul").Select(_ => _.TextContent.Trim('\r', '\n'));
+                var wideHorsePayoutString = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n').Replace("\r", "").Replace("\n","").Split('円').Where(_ => !string.IsNullOrEmpty(_));
+
+                return new RaceResult(raceData)
+                {
+                    WinHorse = WinHorsesStringToList(winHorseString),
+                    WinPayout = PayOutStringToDouble(winPayoutString),
+                    WideHorseList = wideHorseStringList.Select(WinHorsesStringToList).ToList(),
+                    WidePayoutList = wideHorsePayoutString.Select(PayOutStringToDouble).ToList(),
+                    QuinellaHorseList = WinHorsesStringToList(quinellaHorseString),
+                    QuinellaPayout = PayOutStringToDouble(quinellaPayoutString),
+                    ExtractHorseList = WinHorsesStringToList(extractHorseString),
+                    ExtractPayout = PayOutStringToDouble(extractPayoutString),
+                    TrioHorseList = WinHorsesStringToList(trioHorseString),
+                    TrioPayout = PayOutStringToDouble(trioPayoutString),
+                    TrifectaHorseList = WinHorsesStringToList(trifectaHorseString),
+                    TrifectaPayout = PayOutStringToDouble(trifectaPayoutString),
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                Console.WriteLine("Could not get result data.");
+                return null;
+            }
+        }
+
 
         private List<int> WinHorsesStringToList(string winHorsesString)
         {
             //呼び出し元で例外をそのまま受け取りたいので、敢えてTryParseでなくParse
-            return winHorsesString.Trim().Split(' ').Select(_ => int.Parse(_)).ToList();
+            return winHorsesString.Trim().Split(' ', '\n', '\r').Select(_ => int.Parse(_)).ToList();
         }
 
         private double PayOutStringToDouble(string payOutString)
@@ -185,6 +242,7 @@ namespace HorseRacingAutoPurchaser
             //呼び出し元で例外をそのまま受け取りたいので、敢えてTryParseでなくParse
             return double.Parse(payOutString.Replace(",", "").Replace("円", "").Trim());
         }
+
 
 
         /// <summary>
@@ -207,7 +265,97 @@ namespace HorseRacingAutoPurchaser
             {
                 Chrome.Url = url;
                 //画面の切り替わり完了待ち
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
+
+                var parser = new HtmlParser();
+                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+
+                var raceListDataListCollection = doc.GetElementsByClassName("RaceList_Box").FirstOrDefault().GetElementsByClassName("RaceList_DataList");
+                var count = raceListDataListCollection.Length;
+                var regex = new Regex(@".*?(\d+)回 +(.*?) +(.*)日目.*");
+
+                var raceUrlInfoList = new List<HoldingDatum>();
+                for (var i = 0; i < count; i++)
+                {
+                    //.Textだと非表示のものが取得できない
+                    var text = raceListDataListCollection[i].GetElementsByClassName("RaceList_DataTitle").FirstOrDefault().TextContent.Replace("\n", " ").Replace("\r", " ");
+                    var match = regex.Match(text);
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
+
+                    if (!int.TryParse(match.Groups[1].Value, out var numberOfHeld))
+                    {
+                        continue;
+                    }
+                    var regionName = match.Groups[2].Value;
+                    if (!int.TryParse(match.Groups[3].Value, out var numberOfDay))
+                    {
+                        continue;
+                    }
+                    var startTimeList = new List<DateTime>();
+                    var horseCountList = new List<int>();
+                    foreach (var item in raceListDataListCollection[i].GetElementsByClassName("RaceList_ItemContent"))
+                    {
+                        var textForData = item.GetElementsByClassName("RaceData").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
+                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(\d+)頭.*?");
+                        var matchForData = regexForData.Match(textForData);
+                        if (!matchForData.Success)
+                        {
+                            continue;
+                        }
+
+                        if (!int.TryParse(matchForData.Groups[1].Value, out var hours))
+                        {
+                            continue;
+                        }
+                        if (!int.TryParse(matchForData.Groups[2].Value, out var minutes))
+                        {
+                            continue;
+                        }
+                        if (!int.TryParse(matchForData.Groups[3].Value, out var horseNumber))
+                        {
+                            continue;
+                        }
+                        var baseDate = raceDate.Date;
+                        startTimeList.Add(baseDate.AddHours(hours).AddMinutes(minutes));
+                        horseCountList.Add(horseNumber);
+                    }
+
+                    raceUrlInfoList.Add(new HoldingDatum(regionName, numberOfHeld, numberOfDay, raceDate, startTimeList, horseCountList));
+                }
+                return new HoldingInformation(raceUrlInfoList);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                Console.WriteLine("Invalid Page");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// ある開催日のレース情報を一覧取得する。Numberは使わないが一応。
+        /// </summary>
+        /// <param name="kaisaiDateYYYYMMDD"></param>
+        /// <param name="raceType"></param>
+        /// <returns></returns>
+        public HoldingInformation GetHoldingInformation_Old(DateTime raceDate, RegionType raceType)
+        {
+            var url = raceType == RegionType.Regional ?
+                $"https://nar.netkeiba.com/top/race_list.html?kaisai_date={raceDate.ToString("yyyyMMdd")}" :
+                $"https://race.netkeiba.com/top/race_list.html?kaisai_date={raceDate.ToString("yyyyMMdd")}";
+
+            //遅延評価にしたいが、using句の中でyieldして嬉しいことはないのでやめておく
+
+            Console.WriteLine(url);
+
+            try
+            {
+                Chrome.Url = url;
+                //画面の切り替わり完了待ち
+                Thread.Sleep(500);
 
                 var raceListDataListCollection = Chrome.FindElementByClassName("RaceList_Box").FindElements(By.ClassName("RaceList_DataList"));
                 var count = raceListDataListCollection.Count;

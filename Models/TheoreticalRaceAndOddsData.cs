@@ -10,8 +10,6 @@ namespace HorseRacingAutoPurchaser
     [Serializable]
     public class TheoreticalRaceAndOddsData : RaceAndOddsData
     {
-
-
         private List<HorseDatum> HorseData { get; set; }
 
         public TheoreticalRaceAndOddsData(RaceData raceData) : base(raceData)
@@ -35,7 +33,8 @@ namespace HorseRacingAutoPurchaser
             //今は使わないので敢えて取得しない
             //ExactaOdds = calculator.GetAllExactaOdds(2).OrderBy(_ => _.Odds).ToList();
             //TrifectaOdds = calculator.GetAllExactaOdds(3).OrderBy(_ => _.Odds).ToList();
-            //TrioOdds = calculator.GetAllQuinellaOdds(3).OrderBy(_ => _.Odds).ToList();
+            TrioOdds = calculator.GetAllQuinellaOdds(3).OrderBy(_ => _.Odds).ToList();
+            var sum = TrioOdds.Sum(_ => 1 / _.Odds);
         }
 
         public void SetHorseDataFromWinOdds(List<OddsDatum> winOddsData)

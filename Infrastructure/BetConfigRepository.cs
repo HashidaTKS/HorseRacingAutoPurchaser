@@ -12,5 +12,10 @@ namespace HorseRacingAutoPurchaser
         {
 
         }
+
+        public BetConfigRepository(string filePath) : base(filePath)
+        {
+
+        }
     }
 }

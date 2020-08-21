@@ -41,8 +41,9 @@ namespace HorseRacingAutoPurchaser
             new Region("佐賀", "55", RegionType.Regional),
         };
 
-        public static string GetRegionNameAtRakuten(Region region) {
-            if(region.RegionId == "65")
+        public static string GetRegionNameAtRakuten(Region region)
+        {
+            if (region.RegionId == "65")
             {
                 return "帯広ば";
             }
@@ -103,6 +104,7 @@ namespace HorseRacingAutoPurchaser
             { TicketType.Exacta, "馬単"},
             { TicketType.Trio, "三連複"},
             { TicketType.Trifecta, "三連単"},
+            { TicketType.Wide, "ワイド"},
         };
 
         public static Dictionary<TicketType, string> TicketTypeToJraBetTypeString = new Dictionary<TicketType, string>
@@ -112,75 +114,205 @@ namespace HorseRacingAutoPurchaser
             { TicketType.Exacta, "馬単"},
             { TicketType.Trio, "三連複"},
             { TicketType.Trifecta, "三連単"},
+            { TicketType.Wide, "ワイド"},
         };
 
-        public static double GetStatisticalOddsFromActualOdds(double odds)
+        public static double GetStatisticalOddsFromActualOdds(double odds, int rank)
         {
-            return 1.0 / GetStatisticalProbabilityFromActualOdds(odds);
+            return 1.0 / GetStatisticalProbabilityFromActualOdds(odds, rank);
         }
 
-        public static double GetStatisticalProbabilityFromActualOdds(double odds)
+        public static double GetStatisticalProbabilityFromActualOdds(double odds, int rank)
         {
-            if(odds < 1.1)
+            if (odds == 1)
             {
                 return 1;
             }
-            if (odds < 1.2)
+            if (odds <= 1.1)
             {
-                return 0.786;
+                return 0.793;
             }
-            if (odds < 1.3)
+            if (odds <= 1.2)
             {
-                return 0.646;
+                return 0.673;
             }
-            if (odds < 1.4)
+            if (odds <= 1.3)
             {
-                return 0.662;
+                return 0.628;
             }
-            if (odds < 1.5)
+            if (odds <= 1.4)
             {
-                return 0.603;
+                return 0.556;
             }
-            if (odds < 1.6)
+            if (odds <= 1.5)
             {
                 return 0.52;
             }
-            if (odds < 1.7)
+            if (odds <= 1.6)
             {
-                return 0.509;
+                return 0.499;
             }
-            if (odds < 1.8)
+            if (odds <= 1.7)
             {
-                return 0.44;
+                return 0.441;
             }
-            if (odds < 1.9)
+            if (odds <= 1.8)
             {
-                return 0.435;
+                return 0.432;
             }
-            if (odds < 2.0)
+            if (odds <= 1.9)
             {
-                return 0.392;
+                return 0.400;
             }
-            if (odds < 2.2)
+            if (odds <= 2.0)
             {
-                return 0.357;
+                return 0.368;
             }
-            if (odds < 2.4)
+            if (odds <= 2.1)
             {
-                return 0.33;
+                return 0.354;
             }
-            if (odds < 2.6)
+            if (odds <= 2.2)
             {
-                return 0.324;
+                return 0.334;
             }
-            if (odds < 2.8)
+            if (odds <= 2.3)
             {
-                return 0.3;
+                return 0.329;
             }
-            if (odds < 3.0)
+            if (odds <= 2.4)
             {
-                return 0.276;
+                return 0.328;
             }
+            if (odds <= 2.5)
+            {
+                return 0.317;
+            }
+            if (odds <= 2.6)
+            {
+                return 0.301;
+            }
+            if (odds <= 2.7)
+            {
+                return 0.292;
+            }
+            if (odds <= 2.8)
+            {
+                return 0.272;
+            }
+            if (odds <= 2.9)
+            {
+                return 0.279;
+            }
+            if (odds <= 3.4)
+            {
+                return 0.24;
+            }
+            if (odds <= 3.9)
+            {
+                if (rank == 1)
+                {
+                    return 0.211;
+                }
+                if (rank == 2)
+                {
+                    return 0.222;
+                }
+                return 0.22;
+            }
+            if (odds <= 4.9)
+            {
+                if (rank == 1)
+                {
+                    return 0.171;
+                }
+                if (rank == 2)
+                {
+                    return 0.178;
+                }
+
+                return 0.175;
+            }
+            if (odds <= 5.9)
+            {
+                return 0.151;
+            }
+            if (odds <= 6.9)
+            {
+                return 0.125;
+            }
+            if (odds <= 7.9)
+            {
+                return 0.11;
+            }
+            if (odds <= 8.9)
+            {
+                return 0.096;
+            }
+            if (odds <= 9.9)
+            {
+                return 0.09;
+            }
+            if (odds <= 14.9)
+            {
+                return 0.072;
+            }
+            if (odds <= 19.9)
+            {
+                return 0.05;
+            }
+            if (odds <= 24.9)
+            {
+                return 0.037;
+            }
+            if (odds <= 29.9)
+            {
+                return 0.031;
+            }
+            if (odds <= 39.9)
+            {
+                return 0.024;
+            }
+            if (odds <= 49.9)
+            {
+                return 0.018;
+            }
+            if (odds <= 59.9)
+            {
+                return 0.014;
+            }
+            if (odds <= 69.9)
+            {
+                return 0.011;
+            }
+            if (odds <= 79.9)
+            {
+                return 0.011;
+            }
+            if (odds <= 89.9)
+            {
+                return 0.009;
+            }
+            if (odds <= 99.9)
+            {
+                return 0.006;
+            }
+            if (odds <= 150)
+            {
+                return 0.005;
+            }
+            if (odds <= 200)
+            {
+                return 0.003;
+            }
+            if (odds <= 500)
+            {
+                return 0.001;
+            }
+            //勝ったことがない。。。
+            return 0;
+
+            //以下は元々のデータ。
             if (odds < 3.5)
             {
                 return 0.247;
@@ -222,6 +354,16 @@ namespace HorseRacingAutoPurchaser
                 return 0.011;
             }
             return 0.003;
+        }
+
+        /// <summary>
+        /// 統計データがないので、オッズが正しいものとして勝率がその80％になるようにする
+        /// </summary>
+        /// <param name="odds"></param>
+        /// <returns></returns>
+        public static double GetStatisticalProbabilityFromActualOddsForRegional(double odds)
+        {
+            return 0.8 / odds;
         }
     }
 }

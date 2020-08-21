@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace HorseRacingAutoPurchaser
 
         private CancellationTokenSource CancellationTokenSource { get; set; }
 
-        public void Run()
+        public void Run(DateTime from , DateTime to, bool useOnlySavedData)
         {
             if (Running)
             {
@@ -24,14 +25,31 @@ namespace HorseRacingAutoPurchaser
             var betConfig = new BetConfigRepository().ReadAll();
             Task.Run(() =>
             {
-                if (cancelToken.IsCancellationRequested)
+                try
                 {
-                    return;
-                }
-                var from = new DateTime(2020, 1, 1);
-                var to = new DateTime(2020, 7, 15);
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
-                var result = Simulater.Simulate(from, to, betConfig, cancelToken, false);
+                    var result = Simulater.Simulate(from, to, betConfig, cancelToken, useOnlySavedData);
+
+                    var execTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+                    var resultFileName = $"{execTime}-from-{from.ToString("yyyyMMdd")}-to-{to.ToString("yyyyMMdd")}_result.csv";
+                    var configFileName = $"{execTime}-betconfig.xml";
+
+                    var resultFilePath = Path.Combine(".", "SimulationResult", resultFileName);
+                    var configFilePath = Path.Combine(".", "SimulationResult", configFileName);
+
+                    result.OutputCsvToFile(resultFilePath);
+                    var configRepo = new BetConfigRepository(configFilePath);
+                    configRepo.Store(betConfig);
+                }
+                finally
+                {
+                    CancellationTokenSource.Dispose();
+                    CancellationTokenSource = null;
+                }
             }, cancelToken);
         }
 
@@ -42,7 +60,6 @@ namespace HorseRacingAutoPurchaser
                 return;
             }
             CancellationTokenSource.Cancel();
-            CancellationTokenSource = null;
         }
 
         private void PurchaseIfNeed()

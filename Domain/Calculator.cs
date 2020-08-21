@@ -8,9 +8,22 @@ namespace HorseRacingAutoPurchaser
     {
         public List<HorseDatum> HorseData { get; set; }
 
-        public Calculator(List<HorseDatum> horceData)
+        public Calculator(List<HorseDatum> horseData)
         {
-            HorseData = horceData;
+            //トータルが1になるように全確率の補正をする。
+            //3倍以上のオッズ範囲（対応表に基いて、勝率0.276以下とする）が結構ざっくりとしているので、3倍以上のオッズのみ補正する。
+            var totalProbability = horseData.Sum(_ => _.WinProbability);
+            var notFixTargetList = horseData.Where(_ => _.WinProbability >= 0.276).ToList();
+            var fixTargetList = horseData.Where(_ => _.WinProbability < 0.276).ToList();
+            var notFixTargetTotalProbability = notFixTargetList.Sum(_ => _.WinProbability);
+            var fixTargetTotalProbability = fixTargetList.Sum(_ => _.WinProbability);
+
+            var coefficient = (1 - notFixTargetTotalProbability) / fixTargetTotalProbability;
+
+            HorseData = new List<HorseDatum>();
+
+            HorseData.AddRange(notFixTargetList);
+            HorseData.AddRange(fixTargetList.Select(_ => new HorseDatum(_.Number, _.WinProbability * coefficient, _.Name, _.Jockey)));
             //Console.WriteLine(string.Join(",", HorseData.Select(_ => _.WinProbability.ToString())));
             //Console.WriteLine(HorseData.Sum(_ => _.WinProbability));
         }
@@ -115,7 +128,7 @@ namespace HorseRacingAutoPurchaser
         /// <returns></returns>
         public OddsDatum GetWideOdds(List<HorseDatum> horseData)
         {
-            //ワイドの理論値は、三連単のうち、指定の馬が含まれている全ての組み合わせの総和とする。
+            //ワイドの理論値は、三連単（複）のうち、指定の馬が含まれている全ての組み合わせの総和とする。
             var numberList = horseData.Select(_ => _.Number).ToList();
             var restHorseData = HorseData.Where(_ => !numberList.Contains(_.Number));
             var expectedProbability = 0.0;

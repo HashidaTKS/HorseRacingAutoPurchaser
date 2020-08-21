@@ -22,174 +22,208 @@ namespace HorseRacingAutoPurchaser
             var cancelToken = CancellationTokenSource.Token;
             var betConfig = new BetConfigRepository().ReadAll();
             Task.Run(() =>
-            {                
-                if (cancelToken.IsCancellationRequested)
+            {
+                try
                 {
-                    return;
-                }
-                var loginConfig = new LoginConfigRepository().ReadAll();
-                var betResultStatusRepo = new BetResultStatusRepository();
-
-                using (var scraper = new Scraper())
-                using (var autoPurchaser = new AutoPurchaser(loginConfig))
-                {
-                    while (true)
+                    if (cancelToken.IsCancellationRequested)
                     {
-                        var betResultStatus = betResultStatusRepo.ReadAll();
-                        if (betResultStatus == null)
-                        {
-                            betResultStatus = new BetResultStatus();
-                            betResultStatusRepo.Store(betResultStatus);
-                        }
-                        var today = DateTime.Today;
-                        var raceData = RaceDataManager.GetAndStoreRaceDataOfDay(today, scraper);
-                        var targetRaceList = new List<RaceData>();
-                        if (betConfig.QuinellaBetConfig.PurchaseCentral)
-                        {
-                            targetRaceList.AddRange(raceData
-                                .Where(_ => _.HoldingDatum.Region.RagionType == RegionType.Central)
-                                .Where(_ => _.StartTime >= DateTime.Now && _.StartTime <= DateTime.Now.AddMinutes(5)));
-                        }
-                        if (betConfig.QuinellaBetConfig.PurchaseRegional)
-                        {
-                            targetRaceList.AddRange(raceData
-                                //ばんえいは除く。
-                                .Where(_ => _.HoldingDatum.Region.RagionType == RegionType.Regional && _.HoldingDatum.Region.RegionId != "65")
-                                .Where(_ => _.StartTime >= DateTime.Now && _.StartTime <= DateTime.Now.AddMinutes(5)));
-                        }
+                        return;
+                    }
+                    var loginConfig = new LoginConfigRepository().ReadAll();
+                    var betResultStatusRepo = new BetResultStatusRepository();
+                    //Store時にエラーが起きたなどの場合に重複ベットしないためのメモ
+                    var notSavedBetRaceList = new List<ActualRaceAndOddsData>();
 
-                        foreach (var targetRace in targetRaceList)
+                    using (var scraper = new Scraper())
+                    using (var autoPurchaser = new AutoPurchaser(loginConfig))
+                    {
+                        while (true)
                         {
                             try
                             {
-                                var actualRaceAndOddsData = new ActualRaceAndOddsData(targetRace);
-                                var repo = actualRaceAndOddsData.GetRepository();
-                                var savedData = repo.ReadAll();
-                                if (savedData == null)
+                                var betResultStatus = betResultStatusRepo.ReadAll();
+                                if (betResultStatus == null)
                                 {
-                                    actualRaceAndOddsData.SetData(scraper);
+                                    betResultStatus = new BetResultStatus();
+                                    betResultStatusRepo.Store(betResultStatus);
                                 }
-                                else
+                                var today = DateTime.Today;
+                                var raceData = RaceDataManager.GetAndStoreRaceDataOfDay(today, scraper).ToList();
+                                var targetRaceList = new List<RaceData>();
+                                if (betConfig.ContainCentral())
                                 {
-                                    //保存されているということは購入済みなのでスキップする
-                                    continue;
+                                    targetRaceList.AddRange(raceData
+                                        .Where(_ => _.HoldingDatum.Region.RagionType == RegionType.Central)
+                                        .Where(_ => _.StartTime >= DateTime.Now && _.StartTime <= DateTime.Now.AddMinutes(5)));
                                 }
-
-                                var raceDataForComparison = RaceDataForComparisonManager.Get(actualRaceAndOddsData);
-                                var betData = TicketSelector.SelectToBet(raceDataForComparison, betConfig, betResultStatus);
-
-                                if (betData != null && betData.Count > 0)
+                                if (betConfig.ContainRegional())
                                 {
-                                    if (autoPurchaser.Purchase(betData))
-                                    {
-                                        var betInformation = new BetInformation(targetRace, betData);
-                                        var betInfoRepo = betInformation.GetRepository();
-                                        betInfoRepo.Store(betInformation);
-                                    }
+                                    targetRaceList.AddRange(raceData
+                                        //ばんえいは除く。
+                                        .Where(_ => _.HoldingDatum.Region.RagionType == RegionType.Regional && _.HoldingDatum.Region.RegionId != "65")
+                                        .Where(_ => _.StartTime >= DateTime.Now && _.StartTime <= DateTime.Now.AddMinutes(5)));
                                 }
 
-                                repo.Store(actualRaceAndOddsData);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex);
-                                continue;
-                            }
-                        }
-
-                        //必要なら結果データを更新しながら、過去のベットデータから未確認の結果を確認する。
-                        //ただし最大でも一カ月前までしか遡らない。
-                        //また、レースデータが存在している部分のみを対象とする。
-                        var monthBefore = DateTime.Now.AddMonths(-1);
-                        var statusCheckTargetTime = DateTime.Now.AddHours(-1);
-                        var statusCheckStart = betResultStatus.CheckedTime > monthBefore ? betResultStatus.CheckedTime : monthBefore;
-
-
-                        for (var date = statusCheckStart; date < statusCheckTargetTime; date = date.AddDays(1))
-                        {
-                            try
-                            {
-                                if (cancelToken.IsCancellationRequested)
+                                foreach (var targetRace in targetRaceList)
                                 {
-                                    return;
-                                }
-                                foreach (var targetRace in RaceDataManager.GetRaceDataOfDay(date.Date))
-                                {
-                                    if (targetRace == null)
-                                    {
-                                        continue;
-                                    }
-                                    if (targetRace.StartTime > statusCheckTargetTime)
-                                    {
-                                        //本日のまだ確定していないデータの可能性があるので、スキップ
-                                        continue;
-                                    }
-                                    if (targetRace.StartTime < statusCheckStart)
-                                    {
-                                        //確認済みなのでスキップ
-                                        continue;
-                                    }
-
-
                                     try
                                     {
-                                        RaceResultManager.UpdateResultDataIfNeed(scraper, targetRace);
+                                        foreach (var notSavedBetRace in notSavedBetRaceList)
+                                        {
+                                            var repository = notSavedBetRace.GetRepository();
+                                            repository.Store(notSavedBetRace);
+                                        }
+                                        notSavedBetRaceList.Clear();
+
+                                        var actualRaceAndOddsData = new ActualRaceAndOddsData(targetRace);
+                                        var repo = actualRaceAndOddsData.GetRepository();
+                                        var savedData = repo.ReadAll();
+                                        if (savedData == null)
+                                        {
+                                            actualRaceAndOddsData.SetData(scraper);
+                                        }
+                                        else
+                                        {
+                                            //保存されているということは購入済みなのでスキップする
+                                            continue;
+                                        }
+
+                                        var notSavedBet = notSavedBetRaceList.FirstOrDefault(_ => _.BaseRaceData.Equals(actualRaceAndOddsData.BaseRaceData));
+                                        if (notSavedBet != null)
+                                        {
+                                            repo.Store(notSavedBet);
+                                            notSavedBetRaceList.Remove(notSavedBet);
+                                            continue;
+                                        }
+                                        
+
+                                        var raceDataForComparison = RaceDataForComparisonManager.Get(actualRaceAndOddsData);
+                                        var betData = TicketSelector.SelectToBet(raceDataForComparison, betConfig, betResultStatus);
+
+                                        if (betData != null && betData.Any())
+                                        {
+                                            if (autoPurchaser.Purchase(betData))
+                                            {
+                                                var betInformation = new BetInformation(targetRace, betData);
+                                                var betInfoRepo = betInformation.GetRepository();
+                                                betInfoRepo.Store(betInformation);
+                                            }
+                                        }
+                                        notSavedBetRaceList.Add(actualRaceAndOddsData);
+                                        repo.Store(actualRaceAndOddsData);
+                                        notSavedBetRaceList.Remove(actualRaceAndOddsData);
                                     }
                                     catch (Exception ex)
                                     {
                                         Console.WriteLine(ex);
                                         continue;
                                     }
+                                }
 
-                                    var betInformation = BetInformation.GetRepository(targetRace).ReadAll();
-                                    if (betInformation == null)
-                                    {
-                                        continue;
-                                    }
+                                //必要なら結果データを更新しながら、過去のベットデータから未確認の結果を確認する。
+                                //ただし最大でも一カ月前までしか遡らない。
+                                //また、レースデータが存在している部分のみを対象とする。
+                                var monthBefore = DateTime.Now.AddMonths(-1);
+                                var statusCheckTargetTime = DateTime.Now.AddHours(-1);
+                                var statusCheckStart = betResultStatus.CheckedTime > monthBefore ? betResultStatus.CheckedTime : monthBefore;
 
-                                    var raceResult = RaceResult.GetRepository(targetRace).ReadAll();
-                                    foreach (var betDatum in betInformation.BetData)
+
+                                for (var date = statusCheckStart; date < statusCheckTargetTime; date = date.AddDays(1))
+                                {
+                                    try
                                     {
-                                        var resultOfBet = new ResultOfBet(betDatum, raceResult);
-                                        switch (betDatum.TicketType)
+                                        if (cancelToken.IsCancellationRequested)
                                         {
-                                            case TicketType.Quinella:
+                                            return;
+                                        }
+                                        foreach (var targetRace in RaceDataManager.GetRaceDataOfDay(date.Date))
+                                        {
+                                            if (targetRace == null)
+                                            {
+                                                continue;
+                                            }
+                                            if (targetRace.StartTime > statusCheckTargetTime)
+                                            {
+                                                //本日のまだ確定していないデータの可能性があるので、スキップ
+                                                continue;
+                                            }
+                                            if (targetRace.StartTime < statusCheckStart)
+                                            {
+                                                //確認済みなのでスキップ
+                                                continue;
+                                            }
+
+
+                                            try
+                                            {
+                                                RaceResultManager.UpdateResultDataIfNeed(scraper, targetRace);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine(ex);
+                                                continue;
+                                            }
+
+                                            var betInformation = BetInformation.GetRepository(targetRace).ReadAll();
+                                            if (betInformation == null)
+                                            {
+                                                continue;
+                                            }
+
+                                            var raceResult = RaceResult.GetRepository(targetRace).ReadAll();
+                                            foreach (var betDatum in betInformation.BetData)
+                                            {
+                                                var resultOfBet = new ResultOfBet(betDatum, raceResult);
+                                                var targetStatus = betResultStatus.GetTicketTypeStatus(betDatum.TicketType);
                                                 if (resultOfBet.IsHit)
                                                 {
-                                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose = 0;
+                                                    targetStatus.CountOfContinuationLose = 0;
                                                 }
                                                 else
                                                 {
-                                                    betResultStatus.QuinellaBetStatus.CountOfContinuationLose++;
+                                                    targetStatus.CountOfContinuationLose += 1;
                                                 }
-                                                break;
-                                            default:
-                                                break;
+
+                                            }
                                         }
                                     }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex);
+                                        continue;
+                                    }
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex);
-                                continue;
-                            }
-                        }
 
-                        betResultStatus.CheckedTime = statusCheckTargetTime;
-                        betResultStatusRepo.Store(betResultStatus);
+                                betResultStatus.CheckedTime = statusCheckTargetTime;
+                                betResultStatusRepo.Store(betResultStatus);
 
-                        for (var i = 0; i < 30; i++)
-                        {
-                            Thread.Sleep(1 * 1000);
-                            if (cancelToken.IsCancellationRequested)
+                            }
+                            catch
                             {
-                                return;
+                                Console.WriteLine("Error Occured");
+                            }
+
+                            for (var i = 0; i < 30; i++)
+                            {
+                                Thread.Sleep(1 * 1000);
+                                if (cancelToken.IsCancellationRequested)
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
                 }
-
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
+                }
+                finally
+                {
+                    CancellationTokenSource.Dispose();
+                    CancellationTokenSource = null;
+                }
             }, cancelToken);
         }
 
@@ -200,7 +234,6 @@ namespace HorseRacingAutoPurchaser
                 return;
             }
             CancellationTokenSource.Cancel();
-            CancellationTokenSource = null;
         }
 
         private void PurchaseIfNeed()

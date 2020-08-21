@@ -30,17 +30,7 @@ namespace HorseRacingAutoPurchaser
                     {
                         continue;
                     }
-                    var statisticalWinOdds = new List<OddsDatum>();
-
-                    foreach (var winOdds in actualRaceData.WinOdds)
-                    {
-                        if (winOdds == null)
-                        {
-                            continue;
-                        }
-                        statisticalWinOdds.Add(new OddsDatum(winOdds.HorseData, Utility.GetStatisticalOddsFromActualOdds(winOdds.Odds)));
-                    }
-
+                    var statisticalWinOdds = StatisticalOddsGetter.Get(actualRaceData.BaseRaceData.HoldingDatum.Region, actualRaceData.WinOdds);                  
                     var theoreticalRaceData = new TheoreticalRaceAndOddsData(raceData);
                     theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
                     theoreticalRaceData.SetData();
@@ -57,16 +47,7 @@ namespace HorseRacingAutoPurchaser
 
         public static RaceDataForComparison Get(ActualRaceAndOddsData actualRaceData)
         {
-            var statisticalWinOdds = new List<OddsDatum>();
-            foreach (var winOdds in actualRaceData.WinOdds)
-            {
-                if (winOdds == null)
-                {
-                    continue;
-                }
-                statisticalWinOdds.Add(new OddsDatum(winOdds.HorseData, Utility.GetStatisticalOddsFromActualOdds(winOdds.Odds)));
-            }
-
+            var statisticalWinOdds = StatisticalOddsGetter.Get(actualRaceData.BaseRaceData.HoldingDatum.Region, actualRaceData.WideOdds);
             var theoreticalRaceData = new TheoreticalRaceAndOddsData(actualRaceData.BaseRaceData);
             theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
             theoreticalRaceData.SetData();

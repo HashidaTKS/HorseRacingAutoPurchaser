@@ -41,7 +41,7 @@ namespace HorseRacingAutoPurchaser
         public AutoPurchaser(LoginConfig loginConfig)
         {
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments("headless", "disable-gpu");
+            //chromeOptions.AddArguments("headless", "disable-gpu");
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
             LoginConfig = loginConfig;
         }
@@ -92,7 +92,9 @@ namespace HorseRacingAutoPurchaser
                 foreach (var betInfo in betInfoList)
                 {
                     var shikibetu = Chrome.FindElementByClassName("shikibetu");
-                    var selectedShikibetu = shikibetu.FindElement(By.LinkText("馬連"));
+                    var selectedShikibetu = shikibetu.FindElement(By.LinkText(Utility.TicketTypeToJraBetTypeString[betInfo.TicketType]));
+
+                    //三連複や三連単はまだ未対応
                     selectedShikibetu.Click();
 
                     var houshiki = Chrome.FindElementByClassName("houshiki");

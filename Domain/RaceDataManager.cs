@@ -41,27 +41,20 @@ namespace HorseRacingAutoPurchaser
         public static IEnumerable<RaceData> GetAndStoreRaceDataOfDay(DateTime date, Scraper scraper)
         {
             var holdingInformationRepository = new HoldingInformationRepository();
-            var currentHoldingInformation = holdingInformationRepository.ReadAll();
+            var currentHoldingInformation = holdingInformationRepository.ReadAll() ?? new HoldingInformation(new List<HoldingDatum>());
 
-            if(currentHoldingInformation == null || !currentHoldingInformation.HoldingData.Any(_ => _.HeldDate.Date == date.Date))
+
+            if (!currentHoldingInformation.HoldingData.Any(_ => _.HeldDate.Date == date.Date))
             {
-                try
-                {
-                    //別々に取得しなきゃいけないのおかしくね
-                    var centralHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Central);
-                    var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
+                //別々に取得しなきゃいけないのおかしくね
+                var centralHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Central);
+                var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
 
-                    currentHoldingInformation = currentHoldingInformation.MargeStatus(centralHoldingInformation).MargeStatus(regionalHoldingInformation);
-                    new HoldingInformationRepository().Store(currentHoldingInformation);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    yield break;
-                }
+                currentHoldingInformation = currentHoldingInformation.MargeStatus(centralHoldingInformation).MargeStatus(regionalHoldingInformation);
+                new HoldingInformationRepository().Store(currentHoldingInformation);
             }
-         
-            var holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate.Date == date.Date).ToList();           
+
+            var holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate.Date == date.Date).ToList();
 
             foreach (var holdingDatum in holdingData)
             {
@@ -132,7 +125,7 @@ namespace HorseRacingAutoPurchaser
             if (holdingDatum == null || !holdingDatum.HasFullData)
             {
                 var heldRaseData = scraper.GetHoldingInformation(date, region.RagionType);
-                if(heldRaseData == null)
+                if (heldRaseData == null)
                 {
                     return null;
                 }

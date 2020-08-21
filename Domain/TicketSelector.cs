@@ -7,19 +7,23 @@ namespace HorseRacingAutoPurchaser
 {
     public class Cocomo
     {
-        private int Before { get; set; } = 1;
+        private decimal Before { get; set; } = 1;
 
         /// <summary>
         /// N回ココモを実行した場合の倍率を取得する
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        private int GetMagnification(int n)
+        private decimal GetMagnification(decimal n, decimal maxValue)
         {
             Reset();
-            var current = 1;
+            decimal current = 1;
             for (var i = 0; i < n; i++)
             {
+                if(current > maxValue)
+                {
+                    return maxValue;
+                }
                 current = GetNext(current);
             }
             return current;
@@ -30,7 +34,7 @@ namespace HorseRacingAutoPurchaser
         /// </summary>
         /// <param name="current"></param>
         /// <returns></returns>
-        private int GetNext(int current)
+        private decimal GetNext(decimal current)
         {
             var next = current + Before;
             Before = current;
@@ -51,8 +55,7 @@ namespace HorseRacingAutoPurchaser
             if (betResultStatus.CountOfContinuationLose >= 1 && betConfig.CocomoThreshold > 0)
             {
                 var division = betResultStatus.CountOfContinuationLose / betConfig.CocomoThreshold;
-                magnification = Math.Min(GetMagnification(division), betConfig.CocomoMaxMagnification);
-                
+                magnification = (int)GetMagnification(division, (decimal)betConfig.CocomoMaxMagnification);   
             }
             return magnification;
         }
@@ -66,9 +69,14 @@ namespace HorseRacingAutoPurchaser
         public static List<BetDatum> SelectToBet(RaceDataForComparison outputRaceData, BetConfig betconfig, BetResultStatus betResultStatus)
         {
             List<BetDatum> betData = new List<BetDatum>();
-            betData.AddRange(SelectQuinellaTicket(outputRaceData, betconfig.QuinellaBetConfig, betResultStatus.QuinellaBetStatus).OrderByDescending(_ => _.OddsRatio).Take(betconfig.QuinellaBetConfig.MaxPurchaseCount));
-            betData.AddRange(SelectWideTicket(outputRaceData, betconfig.WideBetConfig, betResultStatus.WideBetStatus).OrderByDescending(_ => _.OddsRatio).Take(betconfig.WideBetConfig.MaxPurchaseCount));
-            return betData;
+            var quinellaTicketList = SelectQuinellaTicket(outputRaceData, betconfig.QuinellaBetConfig, betResultStatus.QuinellaBetStatus).ToList();
+            betData.AddRange(quinellaTicketList.OrderByDescending(_ => _.OddsRatio).Take(betconfig.QuinellaBetConfig.MaxPurchaseCountOrderByRatio));
+            betData.AddRange(quinellaTicketList.OrderBy(_ => _.TheoreticalOdds).Take(betconfig.QuinellaBetConfig.MaxPurchaseCountOrderByProbability));
+
+            var wideTicketList = SelectWideTicket(outputRaceData, betconfig.WideBetConfig, betResultStatus.WideBetStatus).ToList();
+            betData.AddRange(wideTicketList.OrderByDescending(_ => _.OddsRatio).Take(betconfig.WideBetConfig.MaxPurchaseCountOrderByRatio));
+            betData.AddRange(wideTicketList.OrderBy(_ => _.TheoreticalOdds).Take(betconfig.WideBetConfig.MaxPurchaseCountOrderByProbability));
+            return betData.Distinct().ToList();
         }
 
         public static IEnumerable<BetDatum> SelectWinTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)
@@ -132,6 +140,20 @@ namespace HorseRacingAutoPurchaser
 
         private static IEnumerable<BetDatum> SelectTicketBase(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betConfigForTicketType, BetResultStatusOfTicketType betResultStatusOfTicketType, TicketType ticketType)
         {
+            if(raceDataForComparison.RaceData.HoldingDatum.Region.RagionType == RegionType.Central)
+            {
+                if (!betConfigForTicketType.PurchaseCentral)
+                {
+                    yield break;
+                }
+            }
+            if (raceDataForComparison.RaceData.HoldingDatum.Region.RagionType == RegionType.Regional)
+            {
+                if (!betConfigForTicketType.PurchaseRegional)
+                {
+                    yield break;
+                }
+            }
             var actualOdds = raceDataForComparison.ActualRaceData.GetOddsOfTicketType(ticketType);
             var theoreticalOdds = raceDataForComparison.TheoreticalRaceData.GetOddsOfTicketType(ticketType);
             var count = actualOdds.Count;
@@ -147,6 +169,10 @@ namespace HorseRacingAutoPurchaser
                     theoreticalOdds[i].Odds >= betConfigForTicketType.MinimumOdds && theoreticalOdds[i].Odds < betConfigForTicketType.MaximumOdds)
                 {
                     var betMoney = GetAdjustedBetMoney(betConfigForTicketType.MinimumPayBack, actualOdds[i].Odds);
+                    if(actualOdds[i].Odds == 11.7)
+                    {
+                        var y = 10;
+                    }
                     if (betConfigForTicketType.UseCocomo)
                     {
                         betMoney *= cocomo.GetMagnification(betConfigForTicketType, betResultStatusOfTicketType);
