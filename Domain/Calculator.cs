@@ -10,20 +10,21 @@ namespace HorseRacingAutoPurchaser
 
         public Calculator(List<HorseDatum> horseData)
         {
+            HorseData = horseData;
             //トータルが1になるように全確率の補正をする。
             //3倍以上のオッズ範囲（対応表に基いて、勝率0.276以下とする）が結構ざっくりとしているので、3倍以上のオッズのみ補正する。
-            var totalProbability = horseData.Sum(_ => _.WinProbability);
-            var notFixTargetList = horseData.Where(_ => _.WinProbability >= 0.276).ToList();
-            var fixTargetList = horseData.Where(_ => _.WinProbability < 0.276).ToList();
-            var notFixTargetTotalProbability = notFixTargetList.Sum(_ => _.WinProbability);
-            var fixTargetTotalProbability = fixTargetList.Sum(_ => _.WinProbability);
+            //var totalProbability = horseData.Sum(_ => _.WinProbability);
+            //var notFixTargetList = horseData.Where(_ => _.WinProbability >= 0.276).ToList();
+            //var fixTargetList = horseData.Where(_ => _.WinProbability < 0.276).ToList();
+            //var notFixTargetTotalProbability = notFixTargetList.Sum(_ => _.WinProbability);
+            //var fixTargetTotalProbability = fixTargetList.Sum(_ => _.WinProbability);
 
-            var coefficient = (1 - notFixTargetTotalProbability) / fixTargetTotalProbability;
+            //var coefficient = (1 - notFixTargetTotalProbability) / fixTargetTotalProbability;
 
-            HorseData = new List<HorseDatum>();
+            //HorseData = new List<HorseDatum>();
 
-            HorseData.AddRange(notFixTargetList);
-            HorseData.AddRange(fixTargetList.Select(_ => new HorseDatum(_.Number, _.WinProbability * coefficient, _.Name, _.Jockey)));
+            //HorseData.AddRange(notFixTargetList);
+            //HorseData.AddRange(fixTargetList.Select(_ => new HorseDatum(_.Number, _.WinProbability * coefficient, _.Name, _.Jockey)));
             //Console.WriteLine(string.Join(",", HorseData.Select(_ => _.WinProbability.ToString())));
             //Console.WriteLine(HorseData.Sum(_ => _.WinProbability));
         }

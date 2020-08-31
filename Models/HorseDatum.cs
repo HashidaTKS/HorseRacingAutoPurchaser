@@ -7,7 +7,7 @@ namespace HorseRacingAutoPurchaser
 {
     [DataContract]
     [Serializable]
-    public class HorseDatum
+    public class HorseDatum : IEquatable<HorseDatum>
     {
         [DataMember]
         public int Number { get; set; }
@@ -18,10 +18,12 @@ namespace HorseRacingAutoPurchaser
 
         public string Jockey { get; set; }
 
-        public HorseDatum(){
+        public HorseDatum()
+        {
         }
 
-        public HorseDatum(int number, double winProbablility, string name, string jockey) {
+        public HorseDatum(int number, double winProbablility, string name, string jockey)
+        {
             Number = number;
             WinProbability = winProbablility;
             Name = name;
@@ -32,5 +34,20 @@ namespace HorseRacingAutoPurchaser
         {
             return $"馬番[{Number}], 名前[{Name}], 騎手[{Jockey}]";
         }
+
+        public bool Equals(HorseDatum other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            return other.Number == Number && other.WinProbability == WinProbability && other.Name == Name && other.Jockey == Jockey;
+        }
+
+        public override int GetHashCode()
+        {
+            return Number.GetHashCode() ^ WinProbability.GetHashCode() ^ (Name?.GetHashCode() ?? 0) ^ (Jockey?.GetHashCode() ?? 0);
+        }
+
     }
 }

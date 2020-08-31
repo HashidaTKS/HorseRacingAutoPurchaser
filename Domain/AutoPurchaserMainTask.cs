@@ -21,6 +21,8 @@ namespace HorseRacingAutoPurchaser
             CancellationTokenSource = new CancellationTokenSource();
             var cancelToken = CancellationTokenSource.Token;
             var betConfig = new BetConfigRepository().ReadAll();
+
+            //TODO : ネスト深すぎ問題
             Task.Run(() =>
             {
                 try
@@ -47,6 +49,7 @@ namespace HorseRacingAutoPurchaser
                                     betResultStatus = new BetResultStatus();
                                     betResultStatusRepo.Store(betResultStatus);
                                 }
+
                                 var today = DateTime.Today;
                                 var raceData = RaceDataManager.GetAndStoreRaceDataOfDay(today, scraper).ToList();
                                 var targetRaceList = new List<RaceData>();
@@ -80,7 +83,7 @@ namespace HorseRacingAutoPurchaser
                                         var savedData = repo.ReadAll();
                                         if (savedData == null)
                                         {
-                                            actualRaceAndOddsData.SetData(scraper);
+                                            actualRaceAndOddsData.SetRealTimeData(scraper);
                                         }
                                         else
                                         {

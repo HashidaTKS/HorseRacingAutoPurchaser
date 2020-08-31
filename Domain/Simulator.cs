@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace HorseRacingAutoPurchaser
 {
@@ -109,6 +111,8 @@ namespace HorseRacingAutoPurchaser
                 {
                     var raceResultRepository = RaceResult.GetRepository(outputRaceData.RaceData);
                     var raceResult = raceResultRepository.ReadAll();
+                    //var (id, header, body, startTime) = outputRaceData.ToBlogString();
+                    //BlogUpdater.Update(id, header, body, startTime);
                     if (raceResult == null)
                     {
                         continue;

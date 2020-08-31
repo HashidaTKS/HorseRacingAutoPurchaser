@@ -69,6 +69,16 @@ namespace HorseRacingAutoPurchaser
             return RegionInforomation.FirstOrDefault(_ => regionName.Contains(_.RegionName)).RagionType;
         }
 
+        public static Dictionary<TicketType, string> TicketTypeToRealTimeOddsUrlString = new Dictionary<TicketType, string>
+        {
+            { TicketType.Win , "racet" },
+            { TicketType.Exacta , "raceoddsrankut" },
+            { TicketType.Quinella , "raceoddsranku" },
+            { TicketType.Trifecta , "raceoddsrank3rt" },
+            { TicketType.Trio , "raceoddsrank3rp" },
+            { TicketType.Wide , "raceoddsrankwd" },
+        };
+
         public static Dictionary<TicketType, string> TicketTypeToUrlString = new Dictionary<TicketType, string>
         {
             { TicketType.Win , "type=b1" },

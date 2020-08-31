@@ -16,14 +16,26 @@ namespace HorseRacingAutoPurchaser
 
         public void SetData(Scraper scraper)
         {
-            WinOdds = scraper.GetOdds(BaseRaceData, TicketType.Win).OrderBy(_ => _.Odds).ToList();
-            QuinellaOdds = scraper.GetOdds(BaseRaceData, TicketType.Quinella).OrderBy(_ => _.Odds).ToList();
-            WideOdds = scraper.GetOdds(BaseRaceData, TicketType.Wide).OrderBy(_ => _.Odds).ToList();
+            WinOdds = scraper.GetOdds(BaseRaceData, TicketType.Win).Distinct().OrderBy(_ => _.Odds).ToList();
+            QuinellaOdds = scraper.GetOdds(BaseRaceData, TicketType.Quinella).Distinct().OrderBy(_ => _.Odds).ToList();
+            WideOdds = scraper.GetOdds(BaseRaceData, TicketType.Wide).Distinct().OrderBy(_ => _.Odds).ToList();
             //今は使わないので敢えて取得しない
-            //ExactaOdds = scraper.GetOdds(RaceUrlInformation, TicketType.Exacta).OrderBy(_ => _.Odds).ToList();
-            //TrifectaOdds = scraper.GetOdds(RaceUrlInformation, TicketType.Trifecta).OrderBy(_ => _.Odds).ToList();
-            //TrioOdds = scraper.GetOdds(RaceUrlInformation, TicketType.Trio).OrderBy(_ => _.Odds).ToList();
-            //LastUpadateUtcTime = DateTime.UtcNow;
+            //ExactaOdds = scraper.GetOdds(BaseRaceData, TicketType.Exacta).Distinct().OrderBy(_ => _.Odds).ToList();
+            //TrifectaOdds = scraper.GetOdds(BaseRaceData, TicketType.Trifecta).Distinct().OrderBy(_ => _.Odds).ToList();
+            //TrioOdds = scraper.GetOdds(BaseRaceData, TicketType.Trio).Distinct().OrderBy(_ => _.Odds).ToList();
+            LastUpadateUtcTime = DateTime.UtcNow;
+        }
+
+        public void SetRealTimeData(Scraper scraper)
+        {
+            WinOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Win).Distinct().OrderBy(_ => _.Odds).ToList();
+            QuinellaOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Quinella).Distinct().OrderBy(_ => _.Odds).ToList();
+            WideOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Wide).Distinct().OrderBy(_ => _.Odds).ToList();
+            //今は使わないので敢えて取得しない
+            //ExactaOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Exacta).Distinct().OrderBy(_ => _.Odds).ToList();
+            //TrifectaOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Trifecta).Distinct().OrderBy(_ => _.Odds).ToList();
+            //TrioOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Trio).Distinct().OrderBy(_ => _.Odds).ToList();
+            LastUpadateUtcTime = DateTime.UtcNow;
         }
 
         public ActualRaceDataRepository GetRepository()

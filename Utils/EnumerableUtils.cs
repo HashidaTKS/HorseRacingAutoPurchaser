@@ -27,7 +27,7 @@ namespace HorseRacingAutoPurchaser
                 var sameTicketData = targetFromList.FirstOrDefault(_ => _.Item1.SequenceEqual(need.Item1));
                 yield return sameTicketData.Item2;
                 
-                targetFromList.Remove(sameTicketData);
+                //targetFromList.Remove(sameTicketData);
             }
         }
 

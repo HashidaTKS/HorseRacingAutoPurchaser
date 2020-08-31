@@ -47,6 +47,26 @@ namespace HorseRacingAutoPurchaser
             }
         }
 
+        private string GetRealtimeIdString()
+        {
+            return $"i={HoldingDatum.HeldDate.ToString("yyyyMMdd")}{HoldingDatum.Region.RegionId}{RaceNumberAsUrlString}";
+        }
+
+        public string ToRealTimeOddsPageUrlString(TicketType ticketType)
+        {
+            var urlBase = "http://bachu.purasu.com/r/";
+
+            if (ticketType == TicketType.Win)
+            {
+                return $"{urlBase}{Utility.TicketTypeToRealTimeOddsUrlString[ticketType]}?{GetRealtimeIdString()}&os=n&us=1&it=n";
+            }
+            else
+            {
+                //単勝以外では人気順ページに行く
+                return $"{urlBase}{Utility.TicketTypeToRealTimeOddsUrlString[ticketType]}?{GetRealtimeIdString()}";
+            }
+        }
+
         public string ToRaseOddsPageUrlString(TicketType ticketType)
         {
             var urlBase = HoldingDatum.Region.RagionType == RegionType.Regional ?
