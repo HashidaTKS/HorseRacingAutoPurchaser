@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Infrastructures
 {
     public abstract class BaseRepository<T>
     {

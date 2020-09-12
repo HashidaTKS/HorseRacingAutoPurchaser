@@ -11,8 +11,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
     public class Scraper : IDisposable
     {

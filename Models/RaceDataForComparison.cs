@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using HorseRacingAutoPurchaser.Utils;
 
-namespace HorseRacingAutoPurchaser
+
+namespace HorseRacingAutoPurchaser.Models
 {
     public class OutputDatum
     {
@@ -66,9 +68,9 @@ namespace HorseRacingAutoPurchaser
             filterdTheoreticalRaceData.QuinellaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.QuinellaOdds, theoreticalRaceData.QuinellaOdds, TicketType.Quinella).ToList();
             filterdTheoreticalRaceData.WideOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.WideOdds, theoreticalRaceData.WideOdds, TicketType.Wide).ToList();
             //馬連までで十分なので、その他は計算しない
-            filterdTheoreticalRaceData.ExactaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.ExactaOdds, theoreticalRaceData.ExactaOdds, TicketType.Exacta).ToList();
-            filterdTheoreticalRaceData.TrifectaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.TrifectaOdds, theoreticalRaceData.TrifectaOdds, TicketType.Trifecta).ToList();
-            filterdTheoreticalRaceData.TrioOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.TrioOdds, theoreticalRaceData.TrioOdds, TicketType.Trio).ToList();
+            //filterdTheoreticalRaceData.ExactaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.ExactaOdds, theoreticalRaceData.ExactaOdds, TicketType.Exacta).ToList();
+            //filterdTheoreticalRaceData.TrifectaOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.TrifectaOdds, theoreticalRaceData.TrifectaOdds, TicketType.Trifecta).ToList();
+            //filterdTheoreticalRaceData.TrioOdds = EnumerableUtils.GetSameTicketOddsData(actualRaceData.TrioOdds, theoreticalRaceData.TrioOdds, TicketType.Trio).ToList();
 
             TheoreticalRaceData = filterdTheoreticalRaceData;
         }

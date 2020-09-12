@@ -8,10 +8,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
-    //全体的に、Thread.Sleep()はやめたい
+    //TODO: 全体的にThread.Sleep()はやめたい。
     public class AutoPurchaser : IDisposable
     {
         private ChromeDriver Chrome { get; }
@@ -41,6 +44,7 @@ namespace HorseRacingAutoPurchaser
         public AutoPurchaser(LoginConfig loginConfig)
         {
             var chromeOptions = new ChromeOptions();
+            //現状では買えているか確認のためにコメントアウト
             //chromeOptions.AddArguments("headless", "disable-gpu");
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
             LoginConfig = loginConfig;
@@ -208,8 +212,6 @@ namespace HorseRacingAutoPurchaser
 
         private bool PurchaseAtRakutenKeiba(List<BetDatum> betInfoList)
         {
-
-
             foreach (var betInfo in betInfoList)
             {
                 try
@@ -219,7 +221,7 @@ namespace HorseRacingAutoPurchaser
                     Chrome.Url = url;
 
                     //画面の切り替わり完了待ち
-                    Thread.Sleep(1 * 1000);
+                    Thread.Sleep(1000);
 
                     LoginToRakutenIfNeeded(Chrome);
 
@@ -272,7 +274,7 @@ namespace HorseRacingAutoPurchaser
                 {
                     Console.WriteLine("Could not Purchace.");
                     Console.WriteLine(ex);
-                    //これ。途中まで成功している可能性がある。よくない。
+                    //途中まで成功している可能性がある。よくない。
                     return false;
 
                 }

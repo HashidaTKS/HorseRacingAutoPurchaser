@@ -1,10 +1,15 @@
-﻿using System;
+﻿using HorseRacingAutoPurchaser.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Domain;
 
-namespace HorseRacingAutoPurchaser
+
+
+namespace HorseRacingAutoPurchaser.Models
 {
     [DataContract]
     [Serializable]
@@ -33,11 +38,10 @@ namespace HorseRacingAutoPurchaser
             //今は使わないので敢えて取得しない
             //ExactaOdds = calculator.GetAllExactaOdds(2).OrderBy(_ => _.Odds).ToList();
             //TrifectaOdds = calculator.GetAllExactaOdds(3).OrderBy(_ => _.Odds).ToList();
-            TrioOdds = calculator.GetAllQuinellaOdds(3).OrderBy(_ => _.Odds).ToList();
-            var sum = TrioOdds.Sum(_ => 1 / _.Odds);
+            //TrioOdds = calculator.GetAllQuinellaOdds(3).OrderBy(_ => _.Odds).ToList();
         }
 
-        public void SetHorseDataFromWinOdds(List<OddsDatum> winOddsData)
+        public void SetHorseDataFromWinOdds(IEnumerable<OddsDatum> winOddsData)
         {
             var horceData = new List<HorseDatum>();
             foreach(var winOdds in winOddsData)

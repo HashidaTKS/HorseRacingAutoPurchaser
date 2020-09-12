@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HorseRacingAutoPurchaser.Models
+namespace HorseRacingAutoPurchaser.Models.Models
 {
     public class SimulationDatum
     {

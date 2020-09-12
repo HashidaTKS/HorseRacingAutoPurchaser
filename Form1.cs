@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HorseRacingAutoPurchaser.Models;
+using HorseRacingAutoPurchaser.Domain;
+using HorseRacingAutoPurchaser.Infrastructures;
 
 namespace HorseRacingAutoPurchaser
 {

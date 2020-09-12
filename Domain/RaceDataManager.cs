@@ -1,11 +1,14 @@
-﻿using System;
+﻿using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
     public class RaceDataManager
     {
@@ -46,12 +49,12 @@ namespace HorseRacingAutoPurchaser
 
             if (!currentHoldingInformation.HoldingData.Any(_ => _.HeldDate.Date == date.Date))
             {
-                //別々に取得しなきゃいけないのおかしくね
+                //別々に取得しなきゃいけないのおかしい気もする
                 var centralHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Central);
-                // var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
+                var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
 
-                //currentHoldingInformation = currentHoldingInformation.MargeStatus(centralHoldingInformation).MargeStatus(regionalHoldingInformation);
-                currentHoldingInformation = centralHoldingInformation;
+                currentHoldingInformation = currentHoldingInformation.MargeStatus(centralHoldingInformation).MargeStatus(regionalHoldingInformation);
+                //currentHoldingInformation = centralHoldingInformation;
                 new HoldingInformationRepository().Store(currentHoldingInformation);
             }
 

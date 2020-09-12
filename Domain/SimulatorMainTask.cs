@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
     class SimulatorMainTask
     {

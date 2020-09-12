@@ -1,39 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Utils
 {
     public static class EnumerableUtils
     {
-        public static IEnumerable<OddsDatum> GetSameTicketOddsData(List<OddsDatum> needList, List<OddsDatum> fromList, TicketType ticketType)
+        public static IEnumerable<OddsDatum> GetSameTicketOddsData(IEnumerable<OddsDatum> needs, IEnumerable<OddsDatum> froms, TicketType ticketType)
         {
-            List<(List<int>, OddsDatum)> targetNeedList;
-            List<(List<int>, OddsDatum)> targetFromList;
+            IEnumerable<(IEnumerable<int>, OddsDatum)> targetNeedList;
+            IEnumerable<(IEnumerable<int>, OddsDatum)> targetFromList;
 
             if (ticketType == TicketType.Win || ticketType == TicketType.Exacta || ticketType == TicketType.Trifecta)
             {
-                targetNeedList = needList.Select(_ => (_.HorseData.Select(x => x.Number).ToList(), _)).ToList();
-                targetFromList = fromList.Select(_ => (_.HorseData.Select(x => x.Number).ToList(), _)).ToList();
+                targetNeedList = needs.Select(_ => (_.HorseData.Select(x => x.Number), _));
+                targetFromList = froms.Select(_ => (_.HorseData.Select(x => x.Number), _));
 
             }
             else
             {
-                targetNeedList = needList.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).ToList(), _)).ToList();
-                targetFromList = fromList.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).ToList(), _)).ToList();
+                //なんだかなぁ
+                targetNeedList = needs.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).Select(x => x), _));
+                targetFromList = froms.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).Select(x => x), _));
             }
 
             foreach (var need in targetNeedList)
             {
                 var sameTicketData = targetFromList.FirstOrDefault(_ => _.Item1.SequenceEqual(need.Item1));
                 yield return sameTicketData.Item2;
-                
-                //targetFromList.Remove(sameTicketData);
             }
         }
 
-        public static IEnumerable<List<T>> GetContainedList<T>(IEnumerable<T> contained, IEnumerable<List<T>> checkTargetList)
+        public static IEnumerable<IEnumerable<T>> GetContainedList<T>(IEnumerable<T> contained, IEnumerable<IEnumerable<T>> checkTargets)
         {
-            foreach(var checkTarget in checkTargetList){
+            foreach(var checkTarget in checkTargets){
                 if (CombinationalContain(contained, checkTarget))
                 {
                     yield return checkTarget;
@@ -60,7 +60,7 @@ namespace HorseRacingAutoPurchaser
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
         /// <returns></returns>
-        public static IEnumerable<List<T>> GetPermutation<T>(IEnumerable<T> items, int k, bool withRepetition = false)
+        public static IEnumerable<IEnumerable<T>> GetPermutation<T>(IEnumerable<T> items, int k, bool withRepetition = false)
         {
             if (items.Count() == 1)
             {
@@ -80,7 +80,7 @@ namespace HorseRacingAutoPurchaser
 
                 foreach (var rightside in GetPermutation(unused, k - 1, withRepetition))
                 {
-                    yield return leftside.Concat(rightside).ToList();
+                    yield return leftside.Concat(rightside);
                 }
             }
         }

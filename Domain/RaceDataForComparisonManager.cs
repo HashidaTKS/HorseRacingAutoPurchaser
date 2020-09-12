@@ -1,10 +1,13 @@
-﻿using System;
+﻿using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
     public class RaceDataForComparisonManager
     {

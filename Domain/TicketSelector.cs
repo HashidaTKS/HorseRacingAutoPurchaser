@@ -1,9 +1,9 @@
-﻿using System;
+﻿using HorseRacingAutoPurchaser.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
     public class Cocomo
     {
@@ -169,10 +169,6 @@ namespace HorseRacingAutoPurchaser
                     theoreticalOdds[i].Odds >= betConfigForTicketType.MinimumOdds && theoreticalOdds[i].Odds < betConfigForTicketType.MaximumOdds)
                 {
                     var betMoney = GetAdjustedBetMoney(betConfigForTicketType.MinimumPayBack, actualOdds[i].Odds);
-                    if(actualOdds[i].Odds == 11.7)
-                    {
-                        var y = 10;
-                    }
                     if (betConfigForTicketType.UseCocomo)
                     {
                         betMoney *= cocomo.GetMagnification(betConfigForTicketType, betResultStatusOfTicketType);

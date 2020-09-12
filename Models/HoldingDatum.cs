@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using HorseRacingAutoPurchaser.Utils;
 
-namespace HorseRacingAutoPurchaser
+
+namespace HorseRacingAutoPurchaser.Models
 {
     /// <summary>
     /// 大会の開催情報。場所、回数、日数、日時など。

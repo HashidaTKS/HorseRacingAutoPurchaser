@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+
+namespace HorseRacingAutoPurchaser.Infrastructures
 {
     public class HoldingInformationRepository : BaseRepository<HoldingInformation> { 
 

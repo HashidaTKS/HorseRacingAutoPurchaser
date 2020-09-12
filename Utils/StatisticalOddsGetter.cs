@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Utils
 {
     public class StatisticalOddsGetter
     {
@@ -54,7 +56,7 @@ namespace HorseRacingAutoPurchaser
             { "園田" , SonodaPercentageList }
         };
 
-        public static List<OddsDatum> Get(Region region, List<OddsDatum> actualWinOdds)
+        public static IEnumerable<OddsDatum> Get(Region region, List<OddsDatum> actualWinOdds)
         {
             //競争除外などがあった場合。
             //正しいオッズが出せない恐れがあるので何もしない。
@@ -66,26 +68,25 @@ namespace HorseRacingAutoPurchaser
             List<double> probabilityList;
             var sortedActualOdds = actualWinOdds.OrderBy(_ => _.Odds);
 
-            probabilityList = GetCorrectedProbabilityList(
-                sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
-            return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index])).ToList();
+            //probabilityList = GetCorrectedProbabilityList(
+            //    sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
+            //return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index])).ToList();
 
             if (region.RagionType == RegionType.Central)
             {
                 probabilityList = GetCorrectedProbabilityList(
                     sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index])).ToList();
+                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
             }
 
             if (region.RagionType == RegionType.Regional)
             {
                 probabilityList = GetCorrectedProbabilityList(
                     actualWinOdds.Select(_ => Utility.GetStatisticalProbabilityFromActualOddsForRegional(_.Odds)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index])).ToList();
+                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
             }
 
-
-
+            //今後地方競馬で地域ごとのデータを取得することがあれば以下を使う。(今は通らない）
             if (!Correspondance.TryGetValue(region.RegionName, out var probabilityParcentageList))
             {
                 probabilityParcentageList = DefaultPercentageList;
@@ -93,8 +94,7 @@ namespace HorseRacingAutoPurchaser
 
             probabilityList = GetCorrectedProbabilityList(
                 actualWinOdds.Select((_, index) => GetProbabilityFromOddsList(probabilityParcentageList, index)).ToList());
-
-            return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index])).ToList();
+            return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
 
         }
 

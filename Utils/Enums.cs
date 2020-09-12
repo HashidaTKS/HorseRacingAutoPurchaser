@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Utils
 {
     public enum OddsType
     {

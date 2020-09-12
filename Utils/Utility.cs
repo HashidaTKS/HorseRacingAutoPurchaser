@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Utils
 {
     /// <summary>
     /// クラスを作るまでもないユーティリティ
@@ -307,6 +309,8 @@ namespace HorseRacingAutoPurchaser
             {
                 return 0.006;
             }
+            return 0;
+
             if (odds <= 150)
             {
                 return 0.005;
@@ -321,59 +325,365 @@ namespace HorseRacingAutoPurchaser
             }
             //勝ったことがない。。。
             return 0;
-
-            //以下は元々のデータ。
-            if (odds < 3.5)
-            {
-                return 0.247;
-            }
-            if (odds < 4.0)
-            {
-                return 0.224;
-            }
-            if (odds < 5.0)
-            {
-                return 0.176;
-            }
-            if (odds < 7.0)
-            {
-                return 0.134;
-            }
-            if (odds < 10.0)
-            {
-                return 0.1;
-            }
-            if (odds < 15.0)
-            {
-                return 0.07;
-            }
-            if (odds < 20)
-            {
-                return 0.049;
-            }
-            if (odds < 30)
-            {
-                return 0.034;
-            }
-            if (odds < 50)
-            {
-                return 0.021;
-            }
-            if (odds < 100)
-            {
-                return 0.011;
-            }
-            return 0.003;
         }
 
         /// <summary>
-        /// 統計データがないので、オッズが正しいものとして勝率がその80％になるようにする
+        /// 地方競馬全体から求めた勝率を使う。
         /// </summary>
         /// <param name="odds"></param>
         /// <returns></returns>
         public static double GetStatisticalProbabilityFromActualOddsForRegional(double odds)
         {
-            return 0.8 / odds;
+            if (odds == 1)
+            {
+                return 0.895;
+            }
+            if (odds <= 1.1)
+            {
+                return 0.81;
+            }
+            if (odds <= 1.2)
+            {
+                return 0.63;
+            }
+            if (odds <= 1.3)
+            {
+                return 0.67;
+            }
+            if (odds <= 1.4)
+            {
+                return 0.56;
+            }
+            if (odds <= 1.5)
+            {
+                return 0.5;
+            }
+            if (odds <= 1.6)
+            {
+                return 0.43;
+            }
+            if (odds <= 1.7)
+            {
+                return 0.43;
+            }
+            if (odds <= 1.8)
+            {
+                return 0.44;
+            }
+            if (odds <= 1.9)
+            {
+                return 0.41;
+            }
+            if (odds <= 2.0)
+            {
+                return 0.39;
+            }
+            if (odds <= 2.1)
+            {
+                return 0.356;
+            }
+            if (odds <= 2.2)
+            {
+                return 0.41;
+            }
+            if (odds <= 2.3)
+            {
+                return 0.38;
+            }
+            if (odds <= 2.4)
+            {
+                return 0.34;
+            }
+            if (odds <= 2.5)
+            {
+                return 0.317;
+            }
+            if (odds <= 2.6)
+            {
+                return 0.333;
+            }
+            if (odds <= 2.7)
+            {
+                return 0.227;
+            }
+            if (odds <= 2.8)
+            {
+                return 0.288;
+            }
+            if (odds <= 2.9)
+            {
+                return 0.32;
+            }
+            if (odds <= 3.4)
+            {
+                return 0.26;
+            }
+            if (odds <= 3.9)
+            {
+                return 0.213;
+            }
+            if (odds <= 4.9)
+            {
+                return 0.168;
+            }
+            if (odds <= 5.9)
+            {
+                return 0.156;
+            }
+            if (odds <= 6.9)
+            {
+                return 0.102;
+            }
+            if (odds <= 7.9)
+            {
+                return 0.106;
+            }
+            if (odds <= 8.9)
+            {
+                return 0.118;
+            }
+            if (odds <= 9.9)
+            {
+                return 0.084;
+            }
+            if (odds <= 14.9)
+            {
+                return 0.06;
+            }
+            if (odds <= 19.9)
+            {
+                return 0.05;
+            }
+            if (odds <= 24.9)
+            {
+                return 0.033;
+            }
+            if (odds <= 29.9)
+            {
+                return 0.0293;
+            }
+            if (odds <= 39.9)
+            {
+                return 0.0285;
+            }
+            if (odds <= 49.9)
+            {
+                return 0.0214;
+            }
+            if (odds <= 59.9)
+            {
+                return 0.0107;
+            }
+            if (odds <= 69.9)
+            {
+                return 0.009;
+            }
+            if (odds <= 79.9)
+            {
+                return 0.0105;
+            }
+            if (odds <= 89.9)
+            {
+                return 0.003;
+            }
+            if (odds <= 99.9)
+            {
+                return 0.005;
+            }
+            //これ以下の値は見てもしょうがないので。
+            return 0;
+            if (odds <= 150)
+            {
+                return 0.0027;
+            }
+            if (odds <= 200)
+            {
+                return 0.00207;
+            }
+            if (odds <= 500)
+            {
+                return 0.002;
+            }
+            //勝ったことがない。。。
+            return 0;
+        }
+
+        public static double GetGradeStatisticalProbabilityFromActualOdds(double odds, int rank)
+        {
+            if (odds == 1)
+            {
+                return 1;
+            }
+            if (odds <= 1.1)
+            {
+                return 0.905;
+            }
+            if (odds <= 1.2)
+            {
+                return 0.640;
+            }
+            if (odds <= 1.3)
+            {
+                return 0.532;
+            }
+            if (odds <= 1.4)
+            {
+                return 0.558;
+            }
+            if (odds <= 1.5)
+            {
+                //return 0.378;
+                //件数が少ない故の下振れと思われるので補正
+                return 0.5;
+            }
+            if (odds <= 1.6)
+            {
+                return 0.457;
+            }
+            if (odds <= 1.7)
+            {
+                return 0.42;
+            }
+            if (odds <= 1.8)
+            {
+                return 0.446;
+            }
+            if (odds <= 1.9)
+            {
+                return 0.363;
+            }
+            if (odds <= 2.0)
+            {
+                return 40.2;
+            }
+            if (odds <= 2.1)
+            {
+                return 0.337;
+            }
+            if (odds <= 2.2)
+            {
+                return 0.337;
+            }
+            if (odds <= 2.3)
+            {
+                return 0.355;
+            }
+            if (odds <= 2.4)
+            {
+                return 0.275;
+            }
+            if (odds <= 2.5)
+            {
+                return 0.293;
+            }
+            if (odds <= 2.6)
+            {
+                return 0.252;
+            }
+            if (odds <= 2.7)
+            {
+                return 0.281;
+            }
+            if (odds <= 2.8)
+            {
+                return 0.255;
+            }
+            if (odds <= 2.9)
+            {
+                return 0.287;
+            }
+            if (odds <= 3.4)
+            {
+                return 0.243;
+            }
+            if (odds <= 3.9)
+            {
+                return 0.233;
+            }
+            if (odds <= 4.9)
+            {
+                return 0.178;
+            }
+            if (odds <= 5.9)
+            {
+                return 0.159;
+            }
+            if (odds <= 6.9)
+            {
+                return 0.124;
+            }
+            if (odds <= 7.9)
+            {
+                return 0.11;
+            }
+            if (odds <= 8.9)
+            {
+                return 0.099;
+            }
+            if (odds <= 9.9)
+            {
+                return 0.092;
+            }
+            if (odds <= 14.9)
+            {
+                return 0.079;
+            }
+            if (odds <= 19.9)
+            {
+                return 0.05;
+            }
+            if (odds <= 24.9)
+            {
+                return 0.037;
+            }
+            if (odds <= 29.9)
+            {
+                return 0.031;
+            }
+            if (odds <= 39.9)
+            {
+                return 0.024;
+            }
+            if (odds <= 49.9)
+            {
+                return 0.018;
+            }
+            if (odds <= 59.9)
+            {
+                return 0.022;
+            }
+            if (odds <= 69.9)
+            {
+                return 0.011;
+            }
+            if (odds <= 79.9)
+            {
+                return 0.014;
+            }
+            if (odds <= 89.9)
+            {
+                return 0.004;
+            }
+            if (odds <= 99.9)
+            {
+                return 0.008;
+            }
+            //これ以下の値は見てもしょうがないので。
+            return 0;
+            if (odds <= 150)
+            {
+                return 0.004;
+            }
+            if (odds <= 200)
+            {
+                return 0.005;
+            }
+            if (odds <= 500)
+            {
+                return 0.001;
+            }
+            //勝ったことがない。。。
+            return 0;
         }
     }
 }

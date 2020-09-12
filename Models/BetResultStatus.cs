@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using HorseRacingAutoPurchaser.Utils;
 
-namespace HorseRacingAutoPurchaser
+
+namespace HorseRacingAutoPurchaser.Models
 {
     [DataContract]
     public class BetResultStatus

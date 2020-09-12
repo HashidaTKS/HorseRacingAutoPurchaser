@@ -1,4 +1,6 @@
-﻿namespace HorseRacingAutoPurchaser
+﻿using HorseRacingAutoPurchaser.Models;
+
+namespace HorseRacingAutoPurchaser.Infrastructures
 {
     public class LoginConfigRepository : BaseRepository<LoginConfig>
     {

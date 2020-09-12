@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Models
 {
     [DataContract]
     [Serializable]

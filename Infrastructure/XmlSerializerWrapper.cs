@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Infrastructures
 {
     public class XmlSerializerWrapper<T>
     {

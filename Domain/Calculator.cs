@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Infrastructures;
+using HorseRacingAutoPurchaser.Models;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Domain
 {
     public class Calculator
     {
@@ -11,22 +14,6 @@ namespace HorseRacingAutoPurchaser
         public Calculator(List<HorseDatum> horseData)
         {
             HorseData = horseData;
-            //トータルが1になるように全確率の補正をする。
-            //3倍以上のオッズ範囲（対応表に基いて、勝率0.276以下とする）が結構ざっくりとしているので、3倍以上のオッズのみ補正する。
-            //var totalProbability = horseData.Sum(_ => _.WinProbability);
-            //var notFixTargetList = horseData.Where(_ => _.WinProbability >= 0.276).ToList();
-            //var fixTargetList = horseData.Where(_ => _.WinProbability < 0.276).ToList();
-            //var notFixTargetTotalProbability = notFixTargetList.Sum(_ => _.WinProbability);
-            //var fixTargetTotalProbability = fixTargetList.Sum(_ => _.WinProbability);
-
-            //var coefficient = (1 - notFixTargetTotalProbability) / fixTargetTotalProbability;
-
-            //HorseData = new List<HorseDatum>();
-
-            //HorseData.AddRange(notFixTargetList);
-            //HorseData.AddRange(fixTargetList.Select(_ => new HorseDatum(_.Number, _.WinProbability * coefficient, _.Name, _.Jockey)));
-            //Console.WriteLine(string.Join(",", HorseData.Select(_ => _.WinProbability.ToString())));
-            //Console.WriteLine(HorseData.Sum(_ => _.WinProbability));
         }
 
         public IEnumerable<OddsDatum> GetAllWinOdds()
@@ -44,7 +31,7 @@ namespace HorseRacingAutoPurchaser
             var allCombination = EnumerableUtils.GetPermutation(HorseData, rank, false);
             foreach(var combination in allCombination)
             {
-                yield return GetExactaOdds(combination);
+                yield return GetExactaOdds(combination.ToList());
             }
         }
 
@@ -116,7 +103,7 @@ namespace HorseRacingAutoPurchaser
             var expectedProbability = 0.0;
             foreach(var exact in EnumerableUtils.GetPermutation(horseData, horseData.Count))
             {
-                expectedProbability += GetExactaProbability(exact);
+                expectedProbability += GetExactaProbability(exact.ToList());
             }
             var odds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
             return new OddsDatum(horseData, odds);
@@ -141,7 +128,10 @@ namespace HorseRacingAutoPurchaser
             }
 
             var totalOdds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
-            return new OddsDatum(horseData, totalOdds);
+            //シミュレーションしてみると、勝率が実測より1.3倍くらい良くなっている。
+            //実測に合わせてオッズを1.3倍しておく。
+            //TODO: 原因調査
+            return new OddsDatum(horseData, totalOdds * 1.3);
         }
     }
 }

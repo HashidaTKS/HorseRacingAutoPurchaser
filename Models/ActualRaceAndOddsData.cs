@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using HorseRacingAutoPurchaser.Utils;
+using HorseRacingAutoPurchaser.Domain;
+using HorseRacingAutoPurchaser.Infrastructures;
 
-namespace HorseRacingAutoPurchaser
+namespace HorseRacingAutoPurchaser.Models
 {
     [DataContract]
     [Serializable]
