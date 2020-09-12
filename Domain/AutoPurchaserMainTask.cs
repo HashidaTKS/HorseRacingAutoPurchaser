@@ -21,6 +21,7 @@ namespace HorseRacingAutoPurchaser.Domain
             {
                 return;
             }
+            LoggerWrapper.Info("start AutoPurcaserMainTask");
             CancellationTokenSource = new CancellationTokenSource();
             var cancelToken = CancellationTokenSource.Token;
             var betConfig = new BetConfigRepository().ReadAll();
