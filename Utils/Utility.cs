@@ -311,20 +311,20 @@ namespace HorseRacingAutoPurchaser.Utils
             }
             return 0;
 
-            if (odds <= 150)
-            {
-                return 0.005;
-            }
-            if (odds <= 200)
-            {
-                return 0.003;
-            }
-            if (odds <= 500)
-            {
-                return 0.001;
-            }
-            //勝ったことがない。。。
-            return 0;
+            //if (odds <= 150)
+            //{
+            //    return 0.005;
+            //}
+            //if (odds <= 200)
+            //{
+            //    return 0.003;
+            //}
+            //if (odds <= 500)
+            //{
+            //    return 0.001;
+            //}
+            ////勝ったことがない。。。
+            //return 0;
         }
 
         /// <summary>
@@ -492,20 +492,20 @@ namespace HorseRacingAutoPurchaser.Utils
             }
             //これ以下の値は見てもしょうがないので。
             return 0;
-            if (odds <= 150)
-            {
-                return 0.0027;
-            }
-            if (odds <= 200)
-            {
-                return 0.00207;
-            }
-            if (odds <= 500)
-            {
-                return 0.002;
-            }
-            //勝ったことがない。。。
-            return 0;
+            //if (odds <= 150)
+            //{
+            //    return 0.0027;
+            //}
+            //if (odds <= 200)
+            //{
+            //    return 0.00207;
+            //}
+            //if (odds <= 500)
+            //{
+            //    return 0.002;
+            //}
+            ////勝ったことがない。。。
+            //return 0;
         }
 
         public static double GetGradeStatisticalProbabilityFromActualOdds(double odds, int rank)
@@ -670,20 +670,20 @@ namespace HorseRacingAutoPurchaser.Utils
             }
             //これ以下の値は見てもしょうがないので。
             return 0;
-            if (odds <= 150)
-            {
-                return 0.004;
-            }
-            if (odds <= 200)
-            {
-                return 0.005;
-            }
-            if (odds <= 500)
-            {
-                return 0.001;
-            }
-            //勝ったことがない。。。
-            return 0;
+            //if (odds <= 150)
+            //{
+            //    return 0.004;
+            //}
+            //if (odds <= 200)
+            //{
+            //    return 0.005;
+            //}
+            //if (odds <= 500)
+            //{
+            //    return 0.001;
+            //}
+            ////勝ったことがない。。。
+            //return 0;
         }
     }
 }

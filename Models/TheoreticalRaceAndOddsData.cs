@@ -17,6 +17,10 @@ namespace HorseRacingAutoPurchaser.Models
     {
         private List<HorseDatum> HorseData { get; set; }
 
+        public TheoreticalRaceAndOddsData() : base()
+        {
+        }
+
         public TheoreticalRaceAndOddsData(RaceData raceData) : base(raceData)
         {
         }
@@ -26,6 +30,7 @@ namespace HorseRacingAutoPurchaser.Models
         /// 期待オッズを計算する。
         /// これを呼ぶときには、HorseDataに理論値が入っている必要がある。
         /// </summary>
+        // Modelに処理があるのであまりよくない。
         public void SetData()
         {
             var calculator = new Calculator(HorseData);

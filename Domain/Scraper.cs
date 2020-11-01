@@ -103,7 +103,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    LoggerWrapper.Warn(ex);
                     continue;
                 }
                 yield return new OddsDatum(horseData, odds);
@@ -167,7 +167,7 @@ namespace HorseRacingAutoPurchaser.Domain
                     catch(Exception ex)
                     {
                         //競走除外などの理由で馬数が想定より少なかったようなケース
-                        Console.WriteLine(ex);
+                        LoggerWrapper.Warn(ex);
                         break;
                     }
                 }
@@ -299,8 +299,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                Console.WriteLine("Could not get result data.");
+                LoggerWrapper.Warn(ex);
                 return null;
             }
         }
@@ -332,10 +331,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 $"https://nar.netkeiba.com/top/race_list.html?kaisai_date={raceDate.ToString("yyyyMMdd")}" :
                 $"https://race.netkeiba.com/top/race_list.html?kaisai_date={raceDate.ToString("yyyyMMdd")}";
 
-            //遅延評価にしたいが、using句の中でyieldして嬉しいことはないのでやめておく
-
-            Console.WriteLine(url);
-
+            LoggerWrapper.Debug(url);
             try
             {
                 Chrome.Url = url;
@@ -404,95 +400,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                Console.WriteLine("Invalid Page");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// ある開催日のレース情報を一覧取得する。Numberは使わないが一応。
-        /// </summary>
-        /// <param name="kaisaiDateYYYYMMDD"></param>
-        /// <param name="raceType"></param>
-        /// <returns></returns>
-        public HoldingInformation GetHoldingInformation_Old(DateTime raceDate, RegionType raceType)
-        {
-            var url = raceType == RegionType.Regional ?
-                $"https://nar.netkeiba.com/top/race_list.html?kaisai_date={raceDate.ToString("yyyyMMdd")}" :
-                $"https://race.netkeiba.com/top/race_list.html?kaisai_date={raceDate.ToString("yyyyMMdd")}";
-
-            //遅延評価にしたいが、using句の中でyieldして嬉しいことはないのでやめておく
-
-            Console.WriteLine(url);
-
-            try
-            {
-                Chrome.Url = url;
-                //画面の切り替わり完了待ち
-                Thread.Sleep(500);
-
-                var raceListDataListCollection = Chrome.FindElementByClassName("RaceList_Box").FindElements(By.ClassName("RaceList_DataList"));
-                var count = raceListDataListCollection.Count;
-                var regex = new Regex(@".*?(\d+)回 +(.*?) +(.*)日目.*");
-
-                var raceUrlInfoList = new List<HoldingDatum>();
-                for (var i = 0; i < count; i++)
-                {
-                    //.Textだと非表示のものが取得できない
-                    var text = raceListDataListCollection[i].FindElement(By.ClassName("RaceList_DataTitle")).GetAttribute("textContent").Replace("\n", " ").Replace("\r", " ");
-                    var match = regex.Match(text);
-                    if (!match.Success)
-                    {
-                        continue;
-                    }
-
-                    if (!int.TryParse(match.Groups[1].Value, out var numberOfHeld))
-                    {
-                        continue;
-                    }
-                    var regionName = match.Groups[2].Value;
-                    if (!int.TryParse(match.Groups[3].Value, out var numberOfDay))
-                    {
-                        continue;
-                    }
-                    var startTimeList = new List<DateTime>();
-                    var horseCountList = new List<int>();
-                    foreach (var item in raceListDataListCollection[i].FindElements(By.ClassName("RaceList_ItemContent")))
-                    {
-                        var textForData = item.FindElement(By.ClassName("RaceData")).GetAttribute("textContent").Replace("\r", "").Replace("\n", "");
-                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(\d+)頭.*?");
-                        var matchForData = regexForData.Match(textForData);
-                        if (!matchForData.Success)
-                        {
-                            continue;
-                        }
-
-                        if (!int.TryParse(matchForData.Groups[1].Value, out var hours))
-                        {
-                            continue;
-                        }
-                        if (!int.TryParse(matchForData.Groups[2].Value, out var minutes))
-                        {
-                            continue;
-                        }
-                        if (!int.TryParse(matchForData.Groups[3].Value, out var horseNumber))
-                        {
-                            continue;
-                        }
-                        var baseDate = raceDate.Date;
-                        startTimeList.Add(baseDate.AddHours(hours).AddMinutes(minutes));
-                        horseCountList.Add(horseNumber);
-                    }
-
-                    raceUrlInfoList.Add(new HoldingDatum(regionName, numberOfHeld, numberOfDay, raceDate, startTimeList, horseCountList));
-                }
-                return new HoldingInformation(raceUrlInfoList);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                Console.WriteLine("Invalid Page");
+                LoggerWrapper.Warn(ex.Message);
                 return null;
             }
         }

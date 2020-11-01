@@ -19,6 +19,11 @@ namespace HorseRacingAutoPurchaser.Models
         [DataMember]
         public List<BetDatum> BetData { get; set; }
 
+        public BetInformation()
+        {
+        }
+
+
         public BetInformation(RaceData raceData, List<BetDatum> betData)
         {
             RaceData = raceData;

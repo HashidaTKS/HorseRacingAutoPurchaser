@@ -2,7 +2,7 @@
 
 namespace HorseRacingAutoPurchaser.Infrastructures
 {
-    public abstract class BaseRepository<T>
+    public abstract class BaseRepository<T> where T : new()
     {
         protected string FilePath { get;}
         protected XmlSerializerWrapper<T> SerializerWrapper { get; } 
@@ -26,11 +26,19 @@ namespace HorseRacingAutoPurchaser.Infrastructures
             }
         }
 
-        public virtual T ReadAll()
+        public virtual T ReadAll(bool getDefaultInstanceIfNull = false)
         {
             lock (this)
             {
-                return SerializerWrapper.Deserialize();
+                var result = SerializerWrapper.Deserialize();
+                if(result == null)
+                {
+                    if (getDefaultInstanceIfNull)
+                    {
+                        return new T();
+                    }
+                }
+                return result;
             }
         }
     }

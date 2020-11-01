@@ -19,7 +19,6 @@ namespace HorseRacingAutoPurchaser.Utils
             }
             else
             {
-                //なんだかなぁ
                 targetNeedList = needs.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).Select(x => x), _));
                 targetFromList = froms.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).Select(x => x), _));
             }

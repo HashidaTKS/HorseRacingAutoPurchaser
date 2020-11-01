@@ -110,8 +110,6 @@ namespace HorseRacingAutoPurchaser.Domain
                 {
                     var raceResultRepository = RaceResult.GetRepository(outputRaceData.RaceData);
                     var raceResult = raceResultRepository.ReadAll();
-                    //var (id, header, body, startTime) = outputRaceData.ToBlogString();
-                    //BlogUpdater.Update(id, header, body, startTime);
                     if (raceResult == null)
                     {
                         continue;
@@ -144,7 +142,7 @@ namespace HorseRacingAutoPurchaser.Domain
 
     public class TotalResultOfBet
     {
-        //全部メモリ持ちするのやめたいが。。。
+        //全部メモリ持ちするのやめたい
         public List<DailyResultOfBet> ResultOfDayList { get; set; }
 
         public double TotalBetMoney => ResultOfDayList.Sum(_ => _.TotalBetMoney);

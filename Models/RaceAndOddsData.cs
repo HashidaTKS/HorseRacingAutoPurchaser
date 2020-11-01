@@ -37,6 +37,10 @@ namespace HorseRacingAutoPurchaser.Models
         [DataMember]
         public DateTime LastUpadateUtcTime;
 
+        public RaceAndOddsData()
+        {
+        }
+
         public RaceAndOddsData(RaceData raceData)
         {
             BaseRaceData = raceData;

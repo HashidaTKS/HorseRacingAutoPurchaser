@@ -24,7 +24,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                LoggerWrapper.Warn(ex);
                 yield break;
             }
 
@@ -53,8 +53,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 var centralHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Central);
                 var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
 
-                currentHoldingInformation = currentHoldingInformation.MargeStatus(centralHoldingInformation).MargeStatus(regionalHoldingInformation);
-                //currentHoldingInformation = centralHoldingInformation;
+                currentHoldingInformation = currentHoldingInformation.MergeStatus(centralHoldingInformation).MergeStatus(regionalHoldingInformation);
                 new HoldingInformationRepository().Store(currentHoldingInformation);
             }
 

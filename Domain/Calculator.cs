@@ -114,24 +114,25 @@ namespace HorseRacingAutoPurchaser.Domain
         /// </summary>
         /// <param name="horseData"></param>
         /// <returns></returns>
-        public OddsDatum GetWideOdds(List<HorseDatum> horseData)
+        public OddsDatum GetWideOdds(IEnumerable<HorseDatum> horseData)
         {
+            var horseList = horseData.ToList();
             //ワイドの理論値は、三連単（複）のうち、指定の馬が含まれている全ての組み合わせの総和とする。
-            var numberList = horseData.Select(_ => _.Number).ToList();
+            var numberList = horseList.Select(_ => _.Number).ToList();
             var restHorseData = HorseData.Where(_ => !numberList.Contains(_.Number));
             var expectedProbability = 0.0;
 
             foreach (var restHorseDatum in restHorseData)
             {
-                var odds = GetQuinellaOdds(horseData.Append(restHorseDatum).ToList()).Odds;
+                var odds = GetQuinellaOdds(horseList.Append(restHorseDatum).ToList()).Odds;
                 expectedProbability += 1 / odds;
             }
 
             var totalOdds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
-            //シミュレーションしてみると、勝率が実測より1.3倍くらい良くなっている。
+            //シミュレーションしてみると、勝率が実測より1.3倍くらい良くでてしまっている。
             //実測に合わせてオッズを1.3倍しておく。
             //TODO: 原因調査
-            return new OddsDatum(horseData, totalOdds * 1.3);
+            return new OddsDatum(horseList, totalOdds * 1.3);
         }
     }
 }

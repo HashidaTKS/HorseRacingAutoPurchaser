@@ -132,9 +132,9 @@ namespace HorseRacingAutoPurchaser.Domain
                 LoginToIpat(Chrome);
                 return PurchaseAtIpat(Chrome, betInfoList);
             }
-            catch
+            catch(Exception ex)
             {
-                Console.WriteLine("Could not Purchace.");
+                LoggerWrapper.Warn(ex);
                 return false;
             }
         }
@@ -151,7 +151,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                //nothin to do
+                LoggerWrapper.Info(ex);
             }
         }
 
@@ -177,7 +177,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                //nothin to do
+                LoggerWrapper.Info(ex);
             }
         }
 
@@ -204,8 +204,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Could not Purchace.");
-                Console.WriteLine(ex);
+                LoggerWrapper.Warn(ex);
                 return false;
             }
         }
@@ -272,8 +271,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Could not Purchace.");
-                    Console.WriteLine(ex);
+                    LoggerWrapper.Warn(ex);
                     //途中まで成功している可能性がある。よくない。
                     return false;
 
@@ -299,8 +297,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                //Do not need to login
-                //nothin to do
+                LoggerWrapper.Info(ex);
             }
         }
 
@@ -320,8 +317,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                //Do not need to login
-                //nothin to do
+                LoggerWrapper.Info(ex);
             }
         }
 

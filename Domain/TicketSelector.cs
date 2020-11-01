@@ -66,7 +66,7 @@ namespace HorseRacingAutoPurchaser.Domain
     /// </summary>
     public class TicketSelector
     {
-        public static List<BetDatum> SelectToBet(RaceDataForComparison outputRaceData, BetConfig betconfig, BetResultStatus betResultStatus)
+        public static IEnumerable<BetDatum> SelectToBet(RaceDataForComparison outputRaceData, BetConfig betconfig, BetResultStatus betResultStatus)
         {
             List<BetDatum> betData = new List<BetDatum>();
             var quinellaTicketList = SelectQuinellaTicket(outputRaceData, betconfig.QuinellaBetConfig, betResultStatus.QuinellaBetStatus).ToList();
@@ -76,7 +76,7 @@ namespace HorseRacingAutoPurchaser.Domain
             var wideTicketList = SelectWideTicket(outputRaceData, betconfig.WideBetConfig, betResultStatus.WideBetStatus).ToList();
             betData.AddRange(wideTicketList.OrderByDescending(_ => _.OddsRatio).Take(betconfig.WideBetConfig.MaxPurchaseCountOrderByRatio));
             betData.AddRange(wideTicketList.OrderBy(_ => _.TheoreticalOdds).Take(betconfig.WideBetConfig.MaxPurchaseCountOrderByProbability));
-            return betData.Distinct().ToList();
+            return betData.Distinct();
         }
 
         public static IEnumerable<BetDatum> SelectWinTicket(RaceDataForComparison raceDataForComparison, BetConfigForTicketType betconfig, BetResultStatusOfTicketType betResultStatus)

@@ -54,6 +54,10 @@ namespace HorseRacingAutoPurchaser.Models
         [DataMember]
         public List<int> TrifectaHorseList { get; set; }
 
+        public RaceResult()
+        {
+        }
+
         public RaceResult(RaceData raceData)
         {
             RaceData = raceData;

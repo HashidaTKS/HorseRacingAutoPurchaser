@@ -13,6 +13,10 @@ namespace HorseRacingAutoPurchaser.Models
         [DataMember]
         public List<HoldingDatum> HoldingData { get; set; }
 
+        public HoldingInformation()
+        {
+        }
+
         public HoldingInformation(List<HoldingDatum> holdingData)
         {
             HoldingData = holdingData;
@@ -23,7 +27,7 @@ namespace HorseRacingAutoPurchaser.Models
             return HoldingData.FirstOrDefault(_ => _.Region.RegionId == regionId && _.HeldDate.Date == date.Date);
         }
 
-        public HoldingInformation MargeStatus(HoldingInformation holdingInformation)
+        public HoldingInformation MergeStatus(HoldingInformation holdingInformation)
         {
             if (holdingInformation == null)
             {

@@ -13,10 +13,19 @@ namespace HorseRacingAutoPurchaser.Models
     [Serializable]
     public class ActualRaceAndOddsData : RaceAndOddsData
     {
+        public ActualRaceAndOddsData(): base()
+        {
+        }
+
         public ActualRaceAndOddsData(RaceData raceData) : base(raceData)
         {
         }
 
+        /// <summary>
+        /// 終了したレースのオッズを設定する。
+        /// </summary>
+        /// <param name="scraper"></param>
+        // Modelに処理があるのであまりよくない。
         public void SetData(Scraper scraper)
         {
             WinOdds = scraper.GetOdds(BaseRaceData, TicketType.Win).Distinct().OrderBy(_ => _.Odds).ToList();
@@ -29,6 +38,11 @@ namespace HorseRacingAutoPurchaser.Models
             LastUpadateUtcTime = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// リアルタイムオッズを設定する。
+        /// </summary>
+        /// <param name="scraper"></param>
+        // Modelに処理があるのであまりよくない。
         public void SetRealTimeData(Scraper scraper)
         {
             WinOdds = scraper.GetRealTimeOdds(BaseRaceData, TicketType.Win).Distinct().OrderBy(_ => _.Odds).ToList();

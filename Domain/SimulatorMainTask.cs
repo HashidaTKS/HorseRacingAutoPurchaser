@@ -23,6 +23,7 @@ namespace HorseRacingAutoPurchaser.Domain
             {
                 return;
             }
+            LoggerWrapper.Info("Start SimulatorMainTask");
             CancellationTokenSource = new CancellationTokenSource();
             var cancelToken = CancellationTokenSource.Token;
             var betConfig = new BetConfigRepository().ReadAll();
@@ -37,19 +38,19 @@ namespace HorseRacingAutoPurchaser.Domain
 
                     var result = Simulater.Simulate(from, to, betConfig, cancelToken, useOnlySavedData);
 
-                    var execTime = DateTime.Now.ToString("yyyyMMddhhmmss");
-                    var resultFileName = $"{execTime}-from-{from.ToString("yyyyMMdd")}-to-{to.ToString("yyyyMMdd")}_result.csv";
-                    var configFileName = $"{execTime}-betconfig.xml";
-
-                    var resultFilePath = Path.Combine(".", "SimulationResult", resultFileName);
-                    var configFilePath = Path.Combine(".", "SimulationResult", configFileName);
+                    var (resultFilePath , configFilePath) = GetResultFilePaths(from, to);
 
                     result.OutputCsvToFile(resultFilePath);
                     var configRepo = new BetConfigRepository(configFilePath);
                     configRepo.Store(betConfig);
                 }
+                catch(Exception ex)
+                {
+                    LoggerWrapper.Error(ex);
+                }
                 finally
                 {
+                    LoggerWrapper.Info("End SimulatorMainTask");
                     CancellationTokenSource.Dispose();
                     CancellationTokenSource = null;
                 }
@@ -65,9 +66,13 @@ namespace HorseRacingAutoPurchaser.Domain
             CancellationTokenSource.Cancel();
         }
 
-        private void PurchaseIfNeed()
+        private static (string resultFilePath, string configFilePath) GetResultFilePaths(DateTime from, DateTime to)
         {
+            var execTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+            var resultFileName = $"{execTime}-from-{from.ToString("yyyyMMdd")}-to-{to.ToString("yyyyMMdd")}_result.csv";
+            var configFileName = $"{execTime}-betconfig.xml";
 
+            return (Path.Combine(".", "SimulationResult", resultFileName), Path.Combine(".", "SimulationResult", configFileName));
         }
     }
 }

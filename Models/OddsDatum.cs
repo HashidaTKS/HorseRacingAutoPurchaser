@@ -15,12 +15,11 @@ namespace HorseRacingAutoPurchaser.Models
         [DataMember]
         public double Odds { get; set; }
 
-        public OddsDatum(List<HorseDatum> horseData, double odds)
+        public OddsDatum(IEnumerable<HorseDatum> horseData, double odds)
         {
-            HorseData = horseData;
+            HorseData = horseData.ToList();
             Odds = odds;
         }
-
 
         public string GetHorsesString()
         {
