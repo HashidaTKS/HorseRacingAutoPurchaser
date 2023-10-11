@@ -119,7 +119,7 @@ namespace HorseRacingAutoPurchaser.Domain
 
             if (ticketType == TicketType.Win)
             {
-                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
                 var trCollection = doc.GetElementsByClassName("RaceOdds_HorseList_Table").FirstOrDefault()?.GetElementsByTagName("tr");
                 if (trCollection == null)
                 {
@@ -152,11 +152,11 @@ namespace HorseRacingAutoPurchaser.Domain
                 {
                     try
                     {
-                        var betType = Chrome.FindElementById("ninki_select");
+                        var betType = Chrome.FindElement(By.TagName("ninki_select"));
                         new SelectElement(betType).SelectByValue(val.ToString());
                         Thread.Sleep(1500);
 
-                        var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+                        var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
                         var trCollection = doc.GetElementsByClassName("RaceOdds_HorseList_Table").FirstOrDefault()?.GetElementsByTagName("tr");
                         if (trCollection == null)
                         {
@@ -195,7 +195,7 @@ namespace HorseRacingAutoPurchaser.Domain
             //TODO: あとでリファクタリングする
             if (ticketType == TicketType.Win)
             {
-                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
                 var table = doc.GetElementsByTagName("table").FirstOrDefault();
                 if (table == null)
                 {
@@ -220,7 +220,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             else
             {
-                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
                 var tableCollection = doc.GetElementsByClassName("ninkijun-table");
                 foreach(var table in tableCollection)
                 {
@@ -262,7 +262,7 @@ namespace HorseRacingAutoPurchaser.Domain
 
                 //高速化のためにchromedriverではなくAngleSharpを使っている
                 var parser = new HtmlParser();
-                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
 
                 var firstPayoutTable = doc.GetElementsByClassName("Payout_Detail_Table").FirstOrDefault();
                 var winHorseString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
@@ -339,7 +339,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 Thread.Sleep(2000);
 
                 var parser = new HtmlParser();
-                var doc = parser.ParseDocument(Chrome.FindElementByTagName("body").GetAttribute("innerHTML"));
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
 
                 var raceListDataListCollection = doc.GetElementsByClassName("RaceList_Box").FirstOrDefault().GetElementsByClassName("RaceList_DataList");
                 var count = raceListDataListCollection.Length;
