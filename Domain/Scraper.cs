@@ -152,7 +152,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 {
                     try
                     {
-                        var betType = Chrome.FindElement(By.TagName("ninki_select"));
+                        var betType = Chrome.FindElement(By.Id("ninki_select"));
                         new SelectElement(betType).SelectByValue(val.ToString());
                         Thread.Sleep(1500);
 
@@ -164,7 +164,7 @@ namespace HorseRacingAutoPurchaser.Domain
                         }
                         results.AddRange(GetFromPopularTable(trCollection, ticketType));
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         //競走除外などの理由で馬数が想定より少なかったようなケース
                         LoggerWrapper.Warn(ex);
@@ -222,7 +222,7 @@ namespace HorseRacingAutoPurchaser.Domain
             {
                 var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
                 var tableCollection = doc.GetElementsByClassName("ninkijun-table");
-                foreach(var table in tableCollection)
+                foreach (var table in tableCollection)
                 {
                     var trCollection = table.GetElementsByTagName("tr");
                     var count = trCollection.Length;
@@ -246,7 +246,7 @@ namespace HorseRacingAutoPurchaser.Domain
                             continue;
                         }
                         //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                        result.Add(new OddsDatum(horseList , odds));
+                        result.Add(new OddsDatum(horseList, odds));
                     }
                 }
             }
@@ -279,7 +279,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 var trifectaPayoutString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
 
                 var wideHorseStringList = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().GetElementsByTagName("ul").Select(_ => _.TextContent.Trim('\r', '\n'));
-                var wideHorsePayoutString = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n').Replace("\r", "").Replace("\n","").Split('円').Where(_ => !string.IsNullOrEmpty(_));
+                var wideHorsePayoutString = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n').Replace("\r", "").Replace("\n", "").Split('円').Where(_ => !string.IsNullOrEmpty(_));
 
                 return new RaceResult(raceData)
                 {
