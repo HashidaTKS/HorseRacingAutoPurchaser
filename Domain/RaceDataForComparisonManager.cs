@@ -50,7 +50,7 @@ namespace HorseRacingAutoPurchaser.Domain
 
         public static RaceDataForComparison Get(ActualRaceAndOddsData actualRaceData)
         {
-            var statisticalWinOdds = StatisticalOddsGetter.Get(actualRaceData.BaseRaceData.HoldingDatum.Region, actualRaceData.WideOdds);
+            var statisticalWinOdds = StatisticalOddsGetter.Get(actualRaceData.BaseRaceData.HoldingDatum.Region, actualRaceData.WinOdds);
             var theoreticalRaceData = new TheoreticalRaceAndOddsData(actualRaceData.BaseRaceData);
             theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
             theoreticalRaceData.SetData();
