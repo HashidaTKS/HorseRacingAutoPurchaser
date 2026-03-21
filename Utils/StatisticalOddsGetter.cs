@@ -165,6 +165,10 @@ namespace HorseRacingAutoPurchaser.Utils
         private static List<double> GetCorrectedProbabilityList(List<double> from)
         {
             var total = from.Sum();
+            if (total == 0)
+            {
+                return from.Select(_ => 0.0).ToList();
+            }
             var coefficient = 1 / total;
 
             return from.Select(_ => _ * coefficient).ToList();
