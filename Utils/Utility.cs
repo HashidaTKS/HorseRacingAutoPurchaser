@@ -554,7 +554,7 @@ namespace HorseRacingAutoPurchaser.Utils
             }
             if (odds <= 2.0)
             {
-                return 40.2;
+                return 0.402;
             }
             if (odds <= 2.1)
             {

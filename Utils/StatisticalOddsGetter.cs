@@ -122,18 +122,26 @@ namespace HorseRacingAutoPurchaser.Utils
 
             if (region.RagionType == RegionType.Central)
             {
+                var sortedActualOddsList = sortedActualOdds.ToList();
                 probabilityList = GetCorrectedProbabilityList(
-                    sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                    sortedActualOddsList.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
+                var centralProbabilityMap = sortedActualOddsList
+                    .Select((item, index) => new { Number = item.HorseData[0].Number, Prob = probabilityList[index] })
+                    .ToDictionary(x => x.Number, x => x.Prob);
+                return actualWinOdds.Select(_ => new OddsDatum(_.HorseData, 1 / centralProbabilityMap[_.HorseData[0].Number]));
             }
 
             //地方競馬
             //今後地方競馬で地域ごとのデータを取得することがあれば以下を使う。
             if (Correspondance.TryGetValue(region.RegionName, out var probabilityParcentageList))
             {
+                var sortedActualOddsList = actualWinOdds.OrderBy(_ => _.Odds).ToList();
                 probabilityList = GetCorrectedProbabilityList(
-                    actualWinOdds.Select((_, index) => GetProbabilityFromOddsList(probabilityParcentageList, index)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                    sortedActualOddsList.Select((_, index) => GetProbabilityFromOddsList(probabilityParcentageList, index)).ToList());
+                var regionalProbabilityMap = sortedActualOddsList
+                    .Select((item, index) => new { Number = item.HorseData[0].Number, Prob = probabilityList[index] })
+                    .ToDictionary(x => x.Number, x => x.Prob);
+                return actualWinOdds.Select(_ => new OddsDatum(_.HorseData, 1 / regionalProbabilityMap[_.HorseData[0].Number]));
             }
             probabilityList = GetCorrectedProbabilityList(
                 actualWinOdds.Select(_ => Utility.GetStatisticalProbabilityFromActualOddsForRegional(_.Odds)).ToList());
