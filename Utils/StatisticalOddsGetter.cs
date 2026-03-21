@@ -124,7 +124,7 @@ namespace HorseRacingAutoPurchaser.Utils
             {
                 probabilityList = GetCorrectedProbabilityList(
                     sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                return sortedActualOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
             }
 
             //地方競馬
@@ -132,12 +132,12 @@ namespace HorseRacingAutoPurchaser.Utils
             if (Correspondance.TryGetValue(region.RegionName, out var probabilityParcentageList))
             {
                 probabilityList = GetCorrectedProbabilityList(
-                    actualWinOdds.Select((_, index) => GetProbabilityFromOddsList(probabilityParcentageList, index)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                    sortedActualOdds.Select((_, index) => GetProbabilityFromOddsList(probabilityParcentageList, index)).ToList());
+                return sortedActualOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
             }
             probabilityList = GetCorrectedProbabilityList(
-                actualWinOdds.Select(_ => Utility.GetStatisticalProbabilityFromActualOddsForRegional(_.Odds)).ToList());
-            return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                sortedActualOdds.Select(_ => Utility.GetStatisticalProbabilityFromActualOddsForRegional(_.Odds)).ToList());
+            return sortedActualOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
         }
 
         private static double GetProbabilityFromOddsList(List<double> probabilityParcentageLists, int index)

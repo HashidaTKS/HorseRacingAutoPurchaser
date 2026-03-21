@@ -45,7 +45,9 @@ namespace HorseRacingAutoPurchaser.Domain
         public Scraper()
         {
             var chromeOptions = new ChromeOptions();
+#if !DEBUG
             chromeOptions.AddArguments("headless", "disable-gpu");
+#endif
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
         }
 
