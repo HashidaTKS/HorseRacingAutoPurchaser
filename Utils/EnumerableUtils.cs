@@ -26,6 +26,10 @@ namespace HorseRacingAutoPurchaser.Utils
             foreach (var need in targetNeedList)
             {
                 var sameTicketData = targetFromList.FirstOrDefault(_ => _.Item1.SequenceEqual(need.Item1));
+                if (sameTicketData.Item2 == null)
+                {
+                    continue;
+                }
                 yield return sameTicketData.Item2;
             }
         }
