@@ -15,10 +15,6 @@ namespace HorseRacingAutoPurchaser.Domain
         {
             for (var date = from; date <= to; date = date.AddDays(1))
             {
-                if (date < from || date > to)
-                {
-                    continue;
-                }
                 var raceDataOfDay = RaceDataManager.GetRaceDataOfDay(date);
                 foreach (var raceData in raceDataOfDay)
                 {
@@ -37,11 +33,6 @@ namespace HorseRacingAutoPurchaser.Domain
                     var theoreticalRaceData = new TheoreticalRaceAndOddsData(raceData);
                     theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
                     theoreticalRaceData.SetData();
-
-                    if (actualRaceData == null)
-                    {
-                        continue;
-                    }
 
                     yield return new RaceDataForComparison(actualRaceData, theoreticalRaceData);
                 }
