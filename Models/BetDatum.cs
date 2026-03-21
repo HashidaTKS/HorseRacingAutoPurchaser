@@ -8,7 +8,7 @@ using HorseRacingAutoPurchaser.Utils;
 namespace HorseRacingAutoPurchaser.Models
 {
     [DataContract]
-    public class BetDatum 
+    public class BetDatum : IEquatable<BetDatum>
     {
         public RaceData RaceData { get; set; }
 
@@ -33,6 +33,30 @@ namespace HorseRacingAutoPurchaser.Models
             ActualOdds = actualOdds;
             TheoreticalOdds = theoreticalOdds;
             TicketType = ticketType;
+        }
+
+        public bool Equals(BetDatum other)
+        {
+            if (other == null) return false;
+            return TicketType == other.TicketType
+                && HorseNumList != null
+                && other.HorseNumList != null
+                && HorseNumList.SequenceEqual(other.HorseNumList);
+        }
+
+        public override bool Equals(object obj) => Equals(obj as BetDatum);
+
+        public override int GetHashCode()
+        {
+            var hash = TicketType.GetHashCode();
+            if (HorseNumList != null)
+            {
+                foreach (var num in HorseNumList)
+                {
+                    hash = HashCode.Combine(hash, num);
+                }
+            }
+            return hash;
         }
     }
 }
