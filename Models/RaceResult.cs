@@ -84,7 +84,7 @@ namespace HorseRacingAutoPurchaser.Models
                     yield return(TrifectaHorseList, TrifectaPayout);
                     yield break;
                 case TicketType.Wide:
-                    var count = WideHorseList?.Count ?? 0;
+                    var count = Math.Min(WideHorseList?.Count ?? 0, WidePayoutList?.Count ?? 0);
                     for(var i = 0; i < count; i++)
                     {
                         yield return (WideHorseList[i], WidePayoutList[i]);
