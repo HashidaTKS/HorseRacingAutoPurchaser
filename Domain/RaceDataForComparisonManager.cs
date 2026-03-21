@@ -38,11 +38,6 @@ namespace HorseRacingAutoPurchaser.Domain
                     theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
                     theoreticalRaceData.SetData();
 
-                    if (actualRaceData == null)
-                    {
-                        continue;
-                    }
-
                     yield return new RaceDataForComparison(actualRaceData, theoreticalRaceData);
                 }
             }
