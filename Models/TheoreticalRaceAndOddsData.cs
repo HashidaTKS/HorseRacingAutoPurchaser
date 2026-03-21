@@ -48,7 +48,7 @@ namespace HorseRacingAutoPurchaser.Models
 
         public void SetHorseDataFromWinOdds(IEnumerable<OddsDatum> winOddsData)
         {
-            var horceData = new List<HorseDatum>();
+            var horseData = new List<HorseDatum>();
             foreach(var winOdds in winOddsData)
             {
                 var horse = winOdds.HorseData?.FirstOrDefault();
@@ -56,9 +56,9 @@ namespace HorseRacingAutoPurchaser.Models
                 {
                     continue;
                 }
-                horceData.Add(new HorseDatum(horse.Number, 1 / winOdds.Odds, horse.Name, horse.Jockey));
+                horseData.Add(new HorseDatum(horse.Number, 1 / winOdds.Odds, horse.Name, horse.Jockey));
             }
-            this.HorseData = horceData;
+            this.HorseData = horseData;
         }
 
         public bool HasData()
