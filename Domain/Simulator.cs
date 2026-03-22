@@ -185,22 +185,9 @@ namespace HorseRacingAutoPurchaser.Domain
                     hitCount += 1;
                 }
                 totalCount += 1;
-                var outputLine =
-                    $"{result.BetDatum.RaceData.HoldingDatum.HeldDate.ToString("yyyy/MM/dd")}," +
-                    $"{result.BetDatum.RaceData.HoldingDatum.Region.RegionName}," +
-                    $"{result.BetDatum.RaceData.RaceNumber}," +
-                    $"{result.BetDatum.TicketType.ToString()}," +
-                    $"{string.Join(" - ", result.BetDatum.HorseNumList)}," +
-                    $"{result.BetDatum.ActualOdds}," +
-                    $"{result.BetDatum.TheoreticalOdds}," +
-                    $"{result.BetMoney}," +
-                    $"{result.PayBack}," +
-                    $"{result.Profit}," +
-                    $"{currentTotalBetMoney}," +
-                    $"{currentTotalPayBack}," +
-                    $"{currentTotalProfit}," +
-                    $"{currentReturnRate}," +
-                    $"{hitCount / totalCount}";
+                // 複数の補間文字列を + で連結すると中間文字列が生成されるため、単一の補間に統一する
+                var d = result.BetDatum;
+                var outputLine = $"{d.RaceData.HoldingDatum.HeldDate:yyyy/MM/dd},{d.RaceData.HoldingDatum.Region.RegionName},{d.RaceData.RaceNumber},{d.TicketType},{string.Join(" - ", d.HorseNumList)},{d.ActualOdds},{d.TheoreticalOdds},{result.BetMoney},{result.PayBack},{result.Profit},{currentTotalBetMoney},{currentTotalPayBack},{currentTotalProfit},{currentReturnRate},{hitCount / totalCount}";
 
 
                 streamWriter.WriteLine(outputLine);
