@@ -8,6 +8,9 @@ namespace HorseRacingAutoPurchaser.Infrastructures
 {
     public class XmlSerializerWrapper<T>
     {
+        // DataContractSerializer の生成はリフレクションを伴い高コストなため、型ごとに1つキャッシュする
+        private static readonly DataContractSerializer _serializer = new DataContractSerializer(typeof(T));
+
         //ファイルロックした方が良いが…
         private string FilePath { get; }
 
@@ -29,12 +32,11 @@ namespace HorseRacingAutoPurchaser.Infrastructures
                     Encoding = Encoding.UTF8
                 };
                 var tmpFilePath = $@".\{Path.GetRandomFileName()}";
-                var sz = new DataContractSerializer(typeof(T));
                 try
                 {
                     using (var fs = XmlWriter.Create(tmpFilePath, setting))
                     {
-                        sz.WriteObject(fs, obj);
+                        _serializer.WriteObject(fs, obj);
                     }
 
                     if (File.Exists(this.FilePath))
@@ -84,10 +86,9 @@ namespace HorseRacingAutoPurchaser.Infrastructures
             }
             lock (this)
             {
-                var dsz = new DataContractSerializer(typeof(T));
                 using (var fs = XmlReader.Create(this.FilePath))
                 {
-                    return (T)dsz.ReadObject(fs);
+                    return (T)_serializer.ReadObject(fs);
                 }
             }
         }
