@@ -118,8 +118,9 @@ namespace HorseRacingAutoPurchaser.Domain
         {
             var horseList = horseData.ToList();
             //ワイドの理論値は、三連単（複）のうち、指定の馬が含まれている全ての組み合わせの総和とする。
-            var numberList = horseList.Select(_ => _.Number).ToList();
-            var restHorseData = HorseData.Where(_ => !numberList.Contains(_.Number));
+            // HashSet を使うことで Contains の計算量を O(n) → O(1) にする
+            var numberSet = new HashSet<int>(horseList.Select(_ => _.Number));
+            var restHorseData = HorseData.Where(_ => !numberSet.Contains(_.Number));
             var expectedProbability = 0.0;
 
             foreach (var restHorseDatum in restHorseData)
