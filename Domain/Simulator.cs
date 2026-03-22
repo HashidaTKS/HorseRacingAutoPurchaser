@@ -254,10 +254,12 @@ namespace HorseRacingAutoPurchaser.Domain
             //Todo: 綺麗にする
             if (BetDatum.TicketType == TicketType.Quinella || BetDatum.TicketType == TicketType.Wide || BetDatum.TicketType == TicketType.Trio)
             {
+                // ループ内で毎回 OrderBy するのを避け、ループ前に1回だけ計算する
+                var sortedBetHorses = BetDatum.HorseNumList.OrderBy(_ => _).ToList();
                 foreach (var result in results)
                 {
                     //元々並びは同じはずだが、一応
-                    if (result.Item1.OrderBy(_ => _).SequenceEqual(BetDatum.HorseNumList.OrderBy(_ => _)))
+                    if (result.Item1.OrderBy(_ => _).SequenceEqual(sortedBetHorses))
                     {
                         return result.Item2 * (BetMoney / 100);
                     }
