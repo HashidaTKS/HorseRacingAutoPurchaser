@@ -54,7 +54,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 var regionalHoldingInformation = scraper.GetHoldingInformation(date, RegionType.Regional);
 
                 currentHoldingInformation = currentHoldingInformation.MergeStatus(centralHoldingInformation).MergeStatus(regionalHoldingInformation);
-                new HoldingInformationRepository().Store(currentHoldingInformation);
+                holdingInformationRepository.Store(currentHoldingInformation);
             }
 
             var holdingData = currentHoldingInformation.HoldingData.Where(_ => _.HeldDate.Date == date.Date).ToList();
