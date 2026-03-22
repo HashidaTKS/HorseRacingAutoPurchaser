@@ -58,13 +58,11 @@ namespace HorseRacingAutoPurchaser.Domain
                                 LoggerWrapper.Warn(ex);
                             }
 
-                            for (var i = 0; i < 30; i++)
+                            // WaitOne はキャンセル時に即座に返るため、1秒ずつポーリングする必要がない
+                            CancelToken.WaitHandle.WaitOne(30 * 1000);
+                            if (CancelToken.IsCancellationRequested)
                             {
-                                Thread.Sleep(1 * 1000);
-                                if (CancelToken.IsCancellationRequested)
-                                {
-                                    return;
-                                }
+                                return;
                             }
                         }
                     }
