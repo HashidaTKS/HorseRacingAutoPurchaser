@@ -11,6 +11,10 @@ namespace HorseRacingAutoPurchaser.Domain
     {
         public List<HorseDatum> HorseData { get; set; }
 
+        // GetWideOdds は各ペアごとに複数の GetQuinellaOdds を呼ぶ。
+        // 同じ馬セットの組み合わせが複数回登場するためキャッシュで重複計算を避ける。
+        private readonly Dictionary<string, double> _quinellaOddsCache = new Dictionary<string, double>();
+
         public Calculator(List<HorseDatum> horseData)
         {
             HorseData = horseData;
@@ -100,12 +104,17 @@ namespace HorseRacingAutoPurchaser.Domain
         /// <returns></returns>
         public OddsDatum GetQuinellaOdds(List<HorseDatum> horseData)
         {
-            var expectedProbability = 0.0;
-            foreach(var exact in EnumerableUtils.GetPermutation(horseData, horseData.Count))
+            var key = string.Join(",", horseData.Select(h => h.Number).OrderBy(n => n));
+            if (!_quinellaOddsCache.TryGetValue(key, out var odds))
             {
-                expectedProbability += GetExactaProbability(exact.ToList());
+                var expectedProbability = 0.0;
+                foreach (var exact in EnumerableUtils.GetPermutation(horseData, horseData.Count))
+                {
+                    expectedProbability += GetExactaProbability(exact.ToList());
+                }
+                odds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
+                _quinellaOddsCache[key] = odds;
             }
-            var odds = expectedProbability > 0 ? 1 / expectedProbability : Int32.MaxValue;
             return new OddsDatum(horseData, odds);
         }
 
