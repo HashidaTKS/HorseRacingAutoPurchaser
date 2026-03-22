@@ -38,6 +38,11 @@ namespace HorseRacingAutoPurchaser.Domain
 
                     var result = Simulater.Simulate(from, to, betConfig, cancelToken, useOnlySavedData);
 
+                    if (result == null)
+                    {
+                        return;
+                    }
+
                     var (resultFilePath , configFilePath) = GetResultFilePaths(from, to);
 
                     result.OutputCsvToFile(resultFilePath);
