@@ -13,28 +13,37 @@ namespace HorseRacingAutoPurchaser.Domain
     {
         public static IEnumerable<RaceDataForComparison> Get(DateTime from, DateTime to)
         {
+            // holding_info.xml をループ外で1回だけ読み込む（日付ループごとに再読み込みしない）
+            var holdingInformation = new HoldingInformationRepository().ReadAll();
+            if (holdingInformation == null)
+            {
+                yield break;
+            }
+
             for (var date = from; date <= to; date = date.AddDays(1))
             {
-                var raceDataOfDay = RaceDataManager.GetRaceDataOfDay(date);
-                foreach (var raceData in raceDataOfDay)
+                var holdingData = holdingInformation.HoldingData
+                    .Where(h => h != null && h.HasFullData && h.HeldDate.Date == date.Date);
+
+                foreach (var holdingDatum in holdingData)
                 {
-                    if (raceData == null)
+                    for (var raceNumber = 1; raceNumber <= holdingDatum.TotalRaceCount; raceNumber++)
                     {
-                        continue;
-                    }
-                    var actualRaceRepo = ActualRaceAndOddsData.GetRepository(raceData);
-                    var actualRaceData = actualRaceRepo.ReadAll();
+                        var raceData = new RaceData(holdingDatum, raceNumber);
+                        var actualRaceRepo = ActualRaceAndOddsData.GetRepository(raceData);
+                        var actualRaceData = actualRaceRepo.ReadAll();
 
-                    if (actualRaceData == null)
-                    {
-                        continue;
-                    }
-                    var statisticalWinOdds = StatisticalOddsGetter.Get(actualRaceData.BaseRaceData.HoldingDatum.Region, actualRaceData.WinOdds);                  
-                    var theoreticalRaceData = new TheoreticalRaceAndOddsData(raceData);
-                    theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
-                    theoreticalRaceData.SetData();
+                        if (actualRaceData == null)
+                        {
+                            continue;
+                        }
+                        var statisticalWinOdds = StatisticalOddsGetter.Get(actualRaceData.BaseRaceData.HoldingDatum.Region, actualRaceData.WinOdds);
+                        var theoreticalRaceData = new TheoreticalRaceAndOddsData(raceData);
+                        theoreticalRaceData.SetHorseDataFromWinOdds(statisticalWinOdds);
+                        theoreticalRaceData.SetData();
 
-                    yield return new RaceDataForComparison(actualRaceData, theoreticalRaceData);
+                        yield return new RaceDataForComparison(actualRaceData, theoreticalRaceData);
+                    }
                 }
             }
         }
