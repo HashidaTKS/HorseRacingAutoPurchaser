@@ -87,7 +87,7 @@ namespace HorseRacingAutoPurchaser.Models
                     var count = WideHorseList?.Count ?? 0;
                     for(var i = 0; i < count; i++)
                     {
-                        yield return (WideHorseList[i], WidePayoutList[i]);
+                        yield return (WideHorseList[i], WidePayoutList != null && i < WidePayoutList.Count ? WidePayoutList[i] : 0);
                     }
                     yield break;
             }
