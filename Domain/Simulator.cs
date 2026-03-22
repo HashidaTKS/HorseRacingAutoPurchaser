@@ -79,7 +79,7 @@ namespace HorseRacingAutoPurchaser.Domain
                 }
             }
 
-            var raceDataForComparisonManager = RaceDataForComparisonManager.Get(from, to);
+            var raceDataForComparisonManager = RaceDataForComparisonManager.Get(from, to, useHoldingInformationCache: true);
             IEnumerable<RaceDataForComparison> outputRaceDataList;
             var totalResult = new List<DailyResultOfBet>();
 

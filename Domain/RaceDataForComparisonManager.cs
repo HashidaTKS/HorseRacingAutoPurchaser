@@ -11,11 +11,11 @@ namespace HorseRacingAutoPurchaser.Domain
 {
     public class RaceDataForComparisonManager
     {
-        public static IEnumerable<RaceDataForComparison> Get(DateTime from, DateTime to)
+        public static IEnumerable<RaceDataForComparison> Get(DateTime from, DateTime to, bool useHoldingInformationCache = false)
         {
             for (var date = from; date <= to; date = date.AddDays(1))
             {
-                var raceDataOfDay = RaceDataManager.GetRaceDataOfDay(date);
+                var raceDataOfDay = RaceDataManager.GetRaceDataOfDay(date, useHoldingInformationCache);
                 foreach (var raceData in raceDataOfDay)
                 {
                     if (raceData == null)

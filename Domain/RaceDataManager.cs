@@ -12,10 +12,19 @@ namespace HorseRacingAutoPurchaser.Domain
 {
     public class RaceDataManager
     {
-        public static IEnumerable<RaceData> GetRaceDataOfDay(DateTime date)
+        private static HoldingInformation CachedHoldingInformation { get; set; }
+
+        public static IEnumerable<RaceData> GetRaceDataOfDay(DateTime date, bool useHoldingInformationCache = false)
         {
             var holdingInformationRepository = new HoldingInformationRepository();
-            var currentHoldingInformation = holdingInformationRepository.ReadAll();
+            HoldingInformation currentHoldingInformation;
+            if (useHoldingInformationCache && CachedHoldingInformation != null) {
+                currentHoldingInformation = CachedHoldingInformation;
+            }
+            else { 
+                currentHoldingInformation = holdingInformationRepository.ReadAll();
+                CachedHoldingInformation = currentHoldingInformation;
+            }
 
             var holdingData = new List<HoldingDatum>();
             try
