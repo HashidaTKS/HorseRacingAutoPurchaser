@@ -152,6 +152,10 @@ namespace HorseRacingAutoPurchaser.Domain
                         }
 
                         var raceResult = RaceResult.GetRepository(targetRace).ReadAll();
+                        if (raceResult == null)
+                        {
+                            continue;
+                        }
                         foreach (var betDatum in betInformation.BetData)
                         {
                             var resultOfBet = new ResultOfBet(betDatum, raceResult);
