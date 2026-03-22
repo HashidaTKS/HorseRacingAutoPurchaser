@@ -14,6 +14,11 @@ namespace HorseRacingAutoPurchaser.Domain
     {
         private static HoldingInformation CachedHoldingInformation { get; set; }
 
+        public static void ResetCache()
+        {
+            CachedHoldingInformation = null;
+        }
+
         public static IEnumerable<RaceData> GetRaceDataOfDay(DateTime date, bool useHoldingInformationCache = false)
         {
             var holdingInformationRepository = new HoldingInformationRepository();

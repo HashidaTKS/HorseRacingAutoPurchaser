@@ -31,7 +31,6 @@ namespace HorseRacingAutoPurchaser.Domain
                 //シミュレーション可能なのは昨日までの結果が確定しているデータとする。
                 to = DateTime.Today.AddDays(-1);
             }
-
             if (!useOnlySavedData)
             {
                 for (var date = from; date <= to; date = date.AddDays(1))

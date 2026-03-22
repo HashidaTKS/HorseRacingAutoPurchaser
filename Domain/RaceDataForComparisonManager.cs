@@ -13,6 +13,7 @@ namespace HorseRacingAutoPurchaser.Domain
     {
         public static IEnumerable<RaceDataForComparison> Get(DateTime from, DateTime to, bool useHoldingInformationCache = false)
         {
+            RaceDataManager.ResetCache();
             for (var date = from; date <= to; date = date.AddDays(1))
             {
                 var raceDataOfDay = RaceDataManager.GetRaceDataOfDay(date, useHoldingInformationCache);
