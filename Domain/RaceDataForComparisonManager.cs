@@ -15,10 +15,6 @@ namespace HorseRacingAutoPurchaser.Domain
         {
             for (var date = from; date <= to; date = date.AddDays(1))
             {
-                if (date < from || date > to)
-                {
-                    continue;
-                }
                 var raceDataOfDay = RaceDataManager.GetRaceDataOfDay(date);
                 foreach (var raceData in raceDataOfDay)
                 {
