@@ -50,10 +50,10 @@ namespace HorseRacingAutoPurchaser.Domain
         }
 
         /// <summary>
-        /// あるN連複の全組み合わせの理論値を返す
+        /// ワイド（拡大馬番連勝複式）の全組み合わせの理論値を返す。
+        /// 2頭の全組み合わせ（C(n,2)通り）それぞれについて <see cref="GetWideOdds"/> を呼ぶ。
         /// </summary>
-        /// <param name="rank"></param>
-        /// <returns></returns>
+        /// <returns>各2頭ペアのワイド理論オッズ一覧</returns>
         public IEnumerable<OddsDatum> GetAllWideOdds()
         {
             var allCombination = EnumerableUtils.GetCombination(HorseData, 2, false);
