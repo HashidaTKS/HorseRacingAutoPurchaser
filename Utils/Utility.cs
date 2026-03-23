@@ -68,7 +68,12 @@ namespace HorseRacingAutoPurchaser.Utils
 
         public static RegionType GetRegionType(string regionName)
         {
-            return RegionInforomation.FirstOrDefault(_ => regionName.Contains(_.RegionName)).RagionType;
+            var region = RegionInforomation.FirstOrDefault(_ => regionName.Contains(_.RegionName));
+            if (region == null)
+            {
+                throw new ArgumentException($"Unknown region name: {regionName}", nameof(regionName));
+            }
+            return region.RagionType;
         }
 
         public static Dictionary<TicketType, string> TicketTypeToRealTimeOddsUrlString = new Dictionary<TicketType, string>
