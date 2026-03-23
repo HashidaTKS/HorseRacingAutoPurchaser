@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Xml;
+using HorseRacingAutoPurchaser.Utils;
 
 namespace HorseRacingAutoPurchaser.Infrastructures
 {
@@ -45,9 +47,10 @@ namespace HorseRacingAutoPurchaser.Infrastructures
                         {
                             File.Replace(tmpFilePath, this.FilePath, null);
                         }
-                        catch
+                        catch (IOException ex)
                         {
-                            //1回だけリトライする
+                            // ファイルが一時的にロックされている場合のみ1回リトライする
+                            LoggerWrapper.Warn(ex);
                             Thread.Sleep(100);
                             File.Replace(tmpFilePath, this.FilePath, null);
                         }
@@ -58,9 +61,10 @@ namespace HorseRacingAutoPurchaser.Infrastructures
                         {
                             File.Move(tmpFilePath, this.FilePath);
                         }
-                        catch
+                        catch (IOException ex)
                         {
-                            //1回だけリトライする
+                            // ファイルが一時的にロックされている場合のみ1回リトライする
+                            LoggerWrapper.Warn(ex);
                             Thread.Sleep(100);
                             File.Move(tmpFilePath, this.FilePath);
                         }
