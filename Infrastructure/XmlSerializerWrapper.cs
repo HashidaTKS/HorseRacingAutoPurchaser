@@ -31,7 +31,7 @@ namespace HorseRacingAutoPurchaser.Infrastructures
                 {
                     Encoding = Encoding.UTF8
                 };
-                var tmpFilePath = $@".\{Path.GetRandomFileName()}";
+                var tmpFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 try
                 {
                     using (var fs = XmlWriter.Create(tmpFilePath, setting))
