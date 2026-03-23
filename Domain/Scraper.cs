@@ -266,22 +266,30 @@ namespace HorseRacingAutoPurchaser.Domain
                 var parser = new HtmlParser();
                 var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
 
-                var firstPayoutTable = doc.GetElementsByClassName("Payout_Detail_Table").FirstOrDefault();
-                var winHorseString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var winPayoutString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var quinellaHorseString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var quinellaPayoutString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var payoutTables = doc.GetElementsByClassName("Payout_Detail_Table");
+                var firstPayoutTable = payoutTables.FirstOrDefault();
+                var secondPayoutTable = payoutTables.Skip(1).FirstOrDefault();
 
-                var secondPayoutTable = doc.GetElementsByClassName("Payout_Detail_Table").Skip(1).FirstOrDefault();
-                var extractHorseString = secondPayoutTable.GetElementsByClassName("Umatan").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var extractPayoutString = secondPayoutTable.GetElementsByClassName("Umatan").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var trioHorseString = secondPayoutTable.GetElementsByClassName("Fuku3").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var trioPayoutString = secondPayoutTable.GetElementsByClassName("Fuku3").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var trifectaHorseString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
-                var trifectaPayoutString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+                if (firstPayoutTable == null || secondPayoutTable == null)
+                {
+                    LoggerWrapper.Warn("Payout_Detail_Table not found in race result page.");
+                    return null;
+                }
 
-                var wideHorseStringList = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().GetElementsByTagName("ul").Select(_ => _.TextContent.Trim('\r', '\n'));
-                var wideHorsePayoutString = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n').Replace("\r", "").Replace("\n", "").Split('円').Where(_ => !string.IsNullOrEmpty(_));
+                var winHorseString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault()?.GetElementsByClassName("Result").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var winPayoutString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault()?.GetElementsByClassName("Payout").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var quinellaHorseString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault()?.GetElementsByClassName("Result").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var quinellaPayoutString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault()?.GetElementsByClassName("Payout").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+
+                var extractHorseString = secondPayoutTable.GetElementsByClassName("Umatan").FirstOrDefault()?.GetElementsByClassName("Result").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var extractPayoutString = secondPayoutTable.GetElementsByClassName("Umatan").FirstOrDefault()?.GetElementsByClassName("Payout").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var trioHorseString = secondPayoutTable.GetElementsByClassName("Fuku3").FirstOrDefault()?.GetElementsByClassName("Result").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var trioPayoutString = secondPayoutTable.GetElementsByClassName("Fuku3").FirstOrDefault()?.GetElementsByClassName("Payout").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var trifectaHorseString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault()?.GetElementsByClassName("Result").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+                var trifectaPayoutString = secondPayoutTable.GetElementsByClassName("Tan3").FirstOrDefault()?.GetElementsByClassName("Payout").FirstOrDefault()?.TextContent.Trim('\r', '\n');
+
+                var wideHorseStringList = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault()?.GetElementsByClassName("Result").FirstOrDefault()?.GetElementsByTagName("ul").Select(_ => _.TextContent.Trim('\r', '\n')) ?? Enumerable.Empty<string>();
+                var wideHorsePayoutString = secondPayoutTable.GetElementsByClassName("Wide").FirstOrDefault()?.GetElementsByClassName("Payout").FirstOrDefault()?.TextContent.Trim('\r', '\n').Replace("\r", "").Replace("\n", "").Split('円').Where(_ => !string.IsNullOrEmpty(_)) ?? Enumerable.Empty<string>();
 
                 return new RaceResult(raceData)
                 {
