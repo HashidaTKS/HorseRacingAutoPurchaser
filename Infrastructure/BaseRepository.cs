@@ -20,26 +20,17 @@ namespace HorseRacingAutoPurchaser.Infrastructures
 
         public virtual void Store(T status)
         {
-            lock (this)
-            {
-                SerializerWrapper.Serialize(status);
-            }
+            SerializerWrapper.Serialize(status);
         }
 
         public virtual T ReadAll(bool getDefaultInstanceIfNull = false)
         {
-            lock (this)
+            var result = SerializerWrapper.Deserialize();
+            if (result == null && getDefaultInstanceIfNull)
             {
-                var result = SerializerWrapper.Deserialize();
-                if(result == null)
-                {
-                    if (getDefaultInstanceIfNull)
-                    {
-                        return new T();
-                    }
-                }
-                return result;
+                return new T();
             }
+            return result;
         }
     }
 }
