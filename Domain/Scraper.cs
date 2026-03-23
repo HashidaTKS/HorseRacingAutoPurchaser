@@ -402,7 +402,7 @@ namespace HorseRacingAutoPurchaser.Domain
             }
             catch (Exception ex)
             {
-                LoggerWrapper.Warn(ex.Message);
+                LoggerWrapper.Warn(ex);
                 return null;
             }
         }
