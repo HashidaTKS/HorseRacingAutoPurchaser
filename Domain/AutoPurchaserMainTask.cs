@@ -83,11 +83,10 @@ namespace HorseRacingAutoPurchaser.Domain
 
         public void Stop()
         {
-            if (!Running)
-            {
-                return;
-            }
-            CancellationTokenSource.Cancel();
+            // ローカル変数にキャプチャしてから使用することで、Running チェックと Cancel 呼び出しの間に
+            // バックグラウンドタスクが CancellationTokenSource を null にする競合状態を防ぐ
+            var cts = CancellationTokenSource;
+            cts?.Cancel();
         }
 
         /// <summary>
