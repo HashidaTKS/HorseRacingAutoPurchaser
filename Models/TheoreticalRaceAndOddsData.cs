@@ -1,5 +1,6 @@
 ﻿using HorseRacingAutoPurchaser.Utils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -72,10 +73,13 @@ namespace HorseRacingAutoPurchaser.Models
             return GetRepository(BaseRaceData);
         }
 
+        private static readonly ConcurrentDictionary<string, TheoreticalRaceDataRepository> _repositoryCache
+            = new ConcurrentDictionary<string, TheoreticalRaceDataRepository>();
+
         public static TheoreticalRaceDataRepository GetRepository(RaceData raceData)
         {
             var path = Utility.GetRaceAndOddsDataFilePath(raceData, OddsType.Theoretical);
-            return new TheoreticalRaceDataRepository(path);
+            return _repositoryCache.GetOrAdd(path, p => new TheoreticalRaceDataRepository(p));
         }
     }
 }

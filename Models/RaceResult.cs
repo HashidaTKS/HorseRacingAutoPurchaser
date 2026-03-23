@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -98,6 +99,9 @@ namespace HorseRacingAutoPurchaser.Models
             return GetRepository(RaceData);
         }
 
+        private static readonly ConcurrentDictionary<string, RaceResultRepository> _repositoryCache
+            = new ConcurrentDictionary<string, RaceResultRepository>();
+
         public static RaceResultRepository GetRepository(RaceData raceData)
         {
             var path = Path.Combine(
@@ -105,7 +109,7 @@ namespace HorseRacingAutoPurchaser.Models
             raceData.HoldingDatum.HeldDate.ToString("yyyyMMdd"),
             "ResultData",
             $"{raceData.HoldingDatum.Region.RegionId}-{raceData.HoldingDatum.Region.RegionName}-{raceData.RaceNumber}.xml");
-            return new RaceResultRepository(path);
+            return _repositoryCache.GetOrAdd(path, p => new RaceResultRepository(p));
         }
     }
 }
