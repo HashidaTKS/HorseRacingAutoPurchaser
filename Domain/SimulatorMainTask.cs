@@ -73,11 +73,12 @@ namespace HorseRacingAutoPurchaser.Domain
 
         private static (string resultFilePath, string configFilePath) GetResultFilePaths(DateTime from, DateTime to)
         {
-            var execTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+            var execTime = DateTime.Now.ToString("yyyyMMddHHmmss");
             var resultFileName = $"{execTime}-from-{from.ToString("yyyyMMdd")}-to-{to.ToString("yyyyMMdd")}_result.csv";
             var configFileName = $"{execTime}-betconfig.xml";
 
-            return (Path.Combine(".", "SimulationResult", resultFileName), Path.Combine(".", "SimulationResult", configFileName));
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            return (Path.Combine(baseDir, "SimulationResult", resultFileName), Path.Combine(baseDir, "SimulationResult", configFileName));
         }
     }
 }
