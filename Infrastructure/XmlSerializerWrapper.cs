@@ -86,7 +86,12 @@ namespace HorseRacingAutoPurchaser.Infrastructures
             }
             lock (this)
             {
-                using (var fs = XmlReader.Create(this.FilePath))
+                var settings = new XmlReaderSettings
+                {
+                    DtdProcessing = DtdProcessing.Prohibit,
+                    XmlResolver = null
+                };
+                using (var fs = XmlReader.Create(this.FilePath, settings))
                 {
                     return (T)_serializer.ReadObject(fs);
                 }
