@@ -26,9 +26,15 @@ namespace HorseRacingAutoPurchaser.Domain
             if (useHoldingInformationCache && CachedHoldingInformation != null) {
                 currentHoldingInformation = CachedHoldingInformation;
             }
-            else { 
+            else
+            {
                 currentHoldingInformation = holdingInformationRepository.ReadAll();
                 CachedHoldingInformation = currentHoldingInformation;
+            }
+
+            if (currentHoldingInformation == null)
+            {
+                yield break;
             }
 
             var holdingData = new List<HoldingDatum>();
