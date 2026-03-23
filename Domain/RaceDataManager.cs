@@ -12,23 +12,32 @@ namespace HorseRacingAutoPurchaser.Domain
 {
     public class RaceDataManager
     {
-        private static HoldingInformation CachedHoldingInformation { get; set; }
+        private static volatile HoldingInformation CachedHoldingInformation;
+        private static readonly object _cacheLock = new object();
 
         public static void ResetCache()
         {
-            CachedHoldingInformation = null;
+            lock (_cacheLock)
+            {
+                CachedHoldingInformation = null;
+            }
         }
 
         public static IEnumerable<RaceData> GetRaceDataOfDay(DateTime date, bool useHoldingInformationCache = false)
         {
             var holdingInformationRepository = new HoldingInformationRepository();
             HoldingInformation currentHoldingInformation;
-            if (useHoldingInformationCache && CachedHoldingInformation != null) {
-                currentHoldingInformation = CachedHoldingInformation;
-            }
-            else { 
-                currentHoldingInformation = holdingInformationRepository.ReadAll();
-                CachedHoldingInformation = currentHoldingInformation;
+            lock (_cacheLock)
+            {
+                if (useHoldingInformationCache && CachedHoldingInformation != null)
+                {
+                    currentHoldingInformation = CachedHoldingInformation;
+                }
+                else
+                {
+                    currentHoldingInformation = holdingInformationRepository.ReadAll();
+                    CachedHoldingInformation = currentHoldingInformation;
+                }
             }
 
             var holdingData = new List<HoldingDatum>();
