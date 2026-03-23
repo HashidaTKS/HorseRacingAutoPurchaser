@@ -343,7 +343,14 @@ namespace HorseRacingAutoPurchaser.Domain
                 var parser = new HtmlParser();
                 var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
 
-                var raceListDataListCollection = doc.GetElementsByClassName("RaceList_Box").FirstOrDefault().GetElementsByClassName("RaceList_DataList");
+                var raceListBox = doc.GetElementsByClassName("RaceList_Box").FirstOrDefault();
+                if (raceListBox == null)
+                {
+                    LoggerWrapper.Warn("RaceList_Box not found in holding information page.");
+                    return new HoldingInformation(new List<HoldingDatum>());
+                }
+
+                var raceListDataListCollection = raceListBox.GetElementsByClassName("RaceList_DataList");
                 var count = raceListDataListCollection.Length;
                 var regex = new Regex(@".*?(\d+)回 +(.*?) +(.*)日目.*");
 
@@ -351,7 +358,9 @@ namespace HorseRacingAutoPurchaser.Domain
                 for (var i = 0; i < count; i++)
                 {
                     //.Textだと非表示のものが取得できない
-                    var text = raceListDataListCollection[i].GetElementsByClassName("RaceList_DataTitle").FirstOrDefault().TextContent.Replace("\n", " ").Replace("\r", " ");
+                    var titleElement = raceListDataListCollection[i].GetElementsByClassName("RaceList_DataTitle").FirstOrDefault();
+                    if (titleElement == null) continue;
+                    var text = titleElement.TextContent.Replace("\n", " ").Replace("\r", " ");
                     var match = regex.Match(text);
                     if (!match.Success)
                     {
@@ -371,7 +380,9 @@ namespace HorseRacingAutoPurchaser.Domain
                     var horseCountList = new List<int>();
                     foreach (var item in raceListDataListCollection[i].GetElementsByClassName("RaceList_ItemContent"))
                     {
-                        var textForData = item.GetElementsByClassName("RaceData").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
+                        var raceDataElement = item.GetElementsByClassName("RaceData").FirstOrDefault();
+                        if (raceDataElement == null) continue;
+                        var textForData = raceDataElement.TextContent.Replace("\r", "").Replace("\n", "");
                         var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(\d+)頭.*?");
                         var matchForData = regexForData.Match(textForData);
                         if (!matchForData.Success)
