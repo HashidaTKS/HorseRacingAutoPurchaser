@@ -1,14 +1,18 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace HorseRacingAutoPurchaser.Infrastructures
 {
     public abstract class BaseRepository<T> where T : new()
     {
         protected string FilePath { get;}
-        protected XmlSerializerWrapper<T> SerializerWrapper { get; } 
+        protected XmlSerializerWrapper<T> SerializerWrapper { get; }
 
         public BaseRepository(string statusFilePath)
         {
+            if (string.IsNullOrWhiteSpace(statusFilePath))
+                throw new ArgumentException("File path must not be null or empty.", nameof(statusFilePath));
+
             FilePath = statusFilePath;
             var dir = Path.GetDirectoryName(FilePath);
             if (!string.IsNullOrEmpty(dir))
