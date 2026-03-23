@@ -11,12 +11,9 @@ namespace HorseRacingAutoPurchaser.Infrastructures
         {
         }
 
-        public HoldingDatum ReadFromDateAndRegion(DateTime date , Region region)
+        public HoldingDatum ReadFromDateAndRegion(DateTime date, Region region)
         {
-            lock (this)
-            {
-                return ReadAll()?.HoldingData?.FirstOrDefault(_ => _.HeldDate.Date == date.Date && _.Region.RegionId == region.RegionId);
-            }
+            return ReadAll()?.HoldingData?.FirstOrDefault(_ => _.HeldDate.Date == date.Date && _.Region.RegionId == region.RegionId);
         }
     }
 }
