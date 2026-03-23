@@ -15,9 +15,13 @@ namespace HorseRacingAutoPurchaser.Utils
         {
             var element = XElement.Load(url);
             var channelElement = element.Element("channel");
-            var elementItems = channelElement.Elements("item");
+            if (channelElement == null)
+            {
+                return Enumerable.Empty<RssDatum>();
+            }
 
-            return elementItems
+            return channelElement.Elements("item")
+                .Where(_ => _.Element("title") != null && _.Element("link") != null && _.Element("description") != null)
                 //後続の処理で少々困るので、現時点ではばんえいは無視する。
                 .Select(_ => new RssDatum(_.Element("title").Value, _.Element("link").Value, _.Element("description").Value))
                 .Where(_ => !_.Title.Contains("ばんえい"));
