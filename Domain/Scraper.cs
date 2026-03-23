@@ -238,8 +238,9 @@ namespace HorseRacingAutoPurchaser.Domain
                         {
                             horseList = horseListString.Split('-').Select(_ => new HorseDatum(int.Parse(_), -1, "", "")).ToList();
                         }
-                        catch
+                        catch (FormatException ex)
                         {
+                            LoggerWrapper.Warn(ex);
                             continue;
                         }
 
