@@ -8,25 +8,25 @@ namespace HorseRacingAutoPurchaser.Utils
     {
         public static IEnumerable<OddsDatum> GetSameTicketOddsData(IEnumerable<OddsDatum> needs, IEnumerable<OddsDatum> froms, TicketType ticketType)
         {
-            IEnumerable<(IEnumerable<int>, OddsDatum)> targetNeedList;
-            IEnumerable<(IEnumerable<int>, OddsDatum)> targetFromList;
+            bool isOrdered = ticketType == TicketType.Win || ticketType == TicketType.Exacta || ticketType == TicketType.Trifecta;
 
-            if (ticketType == TicketType.Win || ticketType == TicketType.Exacta || ticketType == TicketType.Trifecta)
-            {
-                targetNeedList = needs.Select(_ => (_.HorseData.Select(x => x.Number), _));
-                targetFromList = froms.Select(_ => (_.HorseData.Select(x => x.Number), _));
+            // froms を key → OddsDatum の辞書に変換して O(1) ルックアップを実現する
+            // 順序依存チケット: カンマ区切り文字列をキーとして順序を保持
+            // 順序非依存チケット: ソート済みのカンマ区切り文字列をキーとして順序を無視
+            var fromDict = froms.ToDictionary(
+                f => isOrdered
+                    ? string.Join(",", f.HorseData.Select(x => x.Number))
+                    : string.Join(",", f.HorseData.Select(x => x.Number).OrderBy(x => x)),
+                f => f);
 
-            }
-            else
+            foreach (var need in needs)
             {
-                targetNeedList = needs.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).Select(x => x), _));
-                targetFromList = froms.Select(_ => (_.HorseData.Select(x => x.Number).OrderBy(x => x).Select(x => x), _));
-            }
+                var key = isOrdered
+                    ? string.Join(",", need.HorseData.Select(x => x.Number))
+                    : string.Join(",", need.HorseData.Select(x => x.Number).OrderBy(x => x));
 
-            foreach (var need in targetNeedList)
-            {
-                var sameTicketData = targetFromList.FirstOrDefault(_ => _.Item1.SequenceEqual(need.Item1));
-                yield return sameTicketData.Item2;
+                fromDict.TryGetValue(key, out var matched);
+                yield return matched;
             }
         }
 
