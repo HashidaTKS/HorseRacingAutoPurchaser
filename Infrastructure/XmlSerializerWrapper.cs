@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
@@ -11,8 +12,25 @@ namespace HorseRacingAutoPurchaser.Infrastructures
         // DataContractSerializer の生成はリフレクションを伴い高コストなため、型ごとに1つキャッシュする
         private static readonly DataContractSerializer _serializer = new DataContractSerializer(typeof(T));
 
-        //ファイルロックした方が良いが…
+        // ファイルパスをキーとした静的ロックオブジェクト。異なるインスタンスからの同一ファイルへの
+        // 同時アクセスを排他制御するために static で保持する。
+        private static readonly Dictionary<string, object> _fileLocks = new Dictionary<string, object>();
+        private static readonly object _fileLocksDictLock = new object();
+
         private string FilePath { get; }
+
+        private object GetFileLock()
+        {
+            lock (_fileLocksDictLock)
+            {
+                if (!_fileLocks.TryGetValue(FilePath, out var lockObj))
+                {
+                    lockObj = new object();
+                    _fileLocks[FilePath] = lockObj;
+                }
+                return lockObj;
+            }
+        }
 
         internal XmlSerializerWrapper(string filePath)
         {
@@ -25,7 +43,7 @@ namespace HorseRacingAutoPurchaser.Infrastructures
         /// <returns></returns>
         internal void Serialize(T obj)
         {
-            lock (this)
+            lock (GetFileLock())
             {
                 var setting = new XmlWriterSettings()
                 {
@@ -84,7 +102,7 @@ namespace HorseRacingAutoPurchaser.Infrastructures
             {
                 return default;
             }
-            lock (this)
+            lock (GetFileLock())
             {
                 using (var fs = XmlReader.Create(this.FilePath))
                 {
